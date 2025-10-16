@@ -1,4 +1,4 @@
-import { getConfig, getMetadata } from '../../scripts/ak.js';
+import { getConfig, getMetadata, loadBlock } from '../../scripts/ak.js';
 import { loadFragment } from '../fragment/fragment.js';
 import { setColorScheme } from '../section-metadata/section-metadata.js';
 
@@ -168,7 +168,10 @@ async function decorateActionSection(section) {
   section.classList.add('actions-section');
 }
 
-async function decorateHeader(fragment) {
+async function decorateHeader(el, path) {
+  const fragment = await loadFragment(`${locale.prefix}${path}`);
+  fragment.classList.add('header-content');
+
   const sections = fragment.querySelectorAll(':scope > .section');
   if (sections[0]) decorateBrandSection(sections[0]);
   if (sections[1]) decorateNavSection(sections[1]);
@@ -177,6 +180,25 @@ async function decorateHeader(fragment) {
   for (const pattern of HEADER_ACTIONS) {
     decorateAction(fragment, pattern);
   }
+
+  el.prepend(fragment);
+}
+
+async function decorateBreadcrumbs(el) {
+  // Page based breadcrumbs
+  let breadcrumbsEl = el.querySelector('.breadcrumbs');
+  if (!breadcrumbsEl) {
+    // Meta based breadcrumbs
+    const breadcrumbsMeta = getMetadata('breadcrumbs');
+    if (breadcrumbsMeta) {
+      // Meta = Auto based breadcrumbs
+      if (breadcrumbsMeta === 'auto') breadcrumbsEl = getAutoBreadcrumbs(el, breadcrumbsMeta);
+      // Meta = path based breadcrumbs
+      breadcrumbsEl = getFragmentBreadbrumbs(el, breadcrumbsMeta);
+    }
+  }
+  if (!breadcrumbsEl) return;
+  loadBlock(breadcrumbsEl);
 }
 
 /**
@@ -184,13 +206,13 @@ async function decorateHeader(fragment) {
  * @param {Element} el The header element
  */
 export default async function init(el) {
-  const headerMeta = getMetadata('header');
-  const path = headerMeta || HEADER_PATH;
+  const headerMeta = getMetadata('header-source');
+  const headerPath = headerMeta || HEADER_PATH;
   try {
-    const fragment = await loadFragment(`${locale.prefix}${path}`);
-    fragment.classList.add('header-content');
-    await decorateHeader(fragment);
-    el.append(fragment);
+    await decorateHeader(el, headerPath);
+
+    const breadcrumbs = await decorateBreadcrumbs(el);
+    if (breadcrumbs) el.append(breadcrumbs);
   } catch (e) {
     throw Error(e);
   }

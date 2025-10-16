@@ -10,7 +10,7 @@ header {
   right: 0;
   z-index: 1000;
   overflow: hidden;
-  max-height: var(--header-height);
+  max-height: var(--main-nav-height);
   background-color: light-dark(var(--color-light), var(--color-dark));
 
   ul {
@@ -38,7 +38,7 @@ header {
       "brand"
       "nav"
       "actions";
-    grid-template-rows: var(--header-height) auto 1fr;
+    grid-template-rows: var(--main-nav-height) auto 1fr;
   }
 
   .action-wrapper {
@@ -123,7 +123,7 @@ header {
     grid-area: brand;
 
     .default-content {
-      height: var(--header-height);
+      height: var(--main-nav-height);
       display: flex;
       justify-content: space-between;
 
@@ -178,7 +178,7 @@ header {
     }
 
     .action-wrapper {
-      height: var(--header-height);
+      height: var(--main-nav-height);
       right: -13px;
 
       button {

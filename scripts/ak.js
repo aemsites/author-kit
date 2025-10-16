@@ -114,7 +114,7 @@ function decorateButton(link) {
     link.innerHTML = isUnder.innerHTML;
     isUnder.remove();
   }
-  const toReplace = [isEm, isStrong, isStrike].find((el) => el.parentNode === trueParent);
+  const toReplace = [isEm, isStrong, isStrike].find((el) => el?.parentNode === trueParent);
   if (toReplace) trueParent.replaceChild(link, toReplace);
 }
 
@@ -248,10 +248,10 @@ function decorateHeader() {
   }
   header.className = meta;
   header.dataset.status = 'decorated';
-  const breadcrumbs = document.body.querySelector('breadcrumbs');
-  const breadcrumbsPath = getMetadata('breadcrumbs');
-  if (!(breadcrumbs || breadcrumbsPath)) return;
-  document.body.classList.add('has-breadcrumbs');
+  const breadcrumbs = document.body.querySelector('.breadcrumbs');
+  const breadcrumbsMeta = getMetadata('breadcrumbs');
+  if (!(breadcrumbs || breadcrumbsMeta)) return;
+  if (breadcrumbsMeta !== 'off') document.body.classList.add('has-breadcrumbs');
   if (breadcrumbs) header.append(breadcrumbs);
 }
 

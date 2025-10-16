@@ -146,10 +146,6 @@
   --body-font-size-s: 14px;
   --body-font-size-xs: 12px;
   --body-line-height: 1.6;
-
-  /* misc */
-  --header-height: 64px;
-  --breadcrumb-height: 24px;
 }
 
 .light-scheme {
@@ -165,6 +161,9 @@ html {
 }
 
 body {
+  --main-nav-height: 64px;
+  --header-height: var(--main-nav-height);
+
   margin: 0;
   background-color: light-dark(var(--color-light), var(--color-dark));
   color: var(--color-text);
@@ -173,12 +172,8 @@ body {
   line-height: var(--body-line-height);
   padding: var(--header-height) 0 0;
 
-  &.has-breadcrumb {
-    margin: calc(var(--header-height) + var(--breadcrumb-height)) 0 0;
-  }
-
-  &.no-header {
-    margin: 0;
+  &.has-breadcrumbs {
+    --header-height: calc(var(--main-nav-height) + 32px);
   }
 }
 

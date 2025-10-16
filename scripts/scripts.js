@@ -22,13 +22,6 @@ const widgets = [
 // Blocks with self-managed styles
 const components = ['fragment', 'schedule'];
 
-const log = async (e) => {
-  const { default: ENV } = await import('./utils/env.js');
-  if (ENV === 'prod') return;
-  console.log('send to splunk');
-  console.log(e);
-};
-
 // How to decorate an area before loading it
 const decorateArea = ({ area = document }) => {
   const eagerLoad = (parent, selector) => {
@@ -42,6 +35,6 @@ const decorateArea = ({ area = document }) => {
 };
 
 (async function loadPage() {
-  setConfig({ hostnames, log, locales, widgets, components, decorateArea });
+  setConfig({ hostnames, locales, widgets, components, decorateArea });
   await loadArea();
 }());
