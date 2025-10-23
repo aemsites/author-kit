@@ -71,7 +71,7 @@ const formatSearchParams = (url) => {
 };
 
 const formatRequest = (env, request, url) => {
-  url.hostname = env.ORIGIN_HOSTNAME;
+  url.hostname = env.AEM_HOSTNAME;
   url.port = '';
   url.protocol = 'https:';
   const req = new Request(url, request);
