@@ -1,5 +1,10 @@
-# Author Kit
-For projects that want a few more batteries. Built by the team who brought you da.live and adobe.com.
+# AK Media
+An Author Kit fork expression targeted at news, PR, blogs, podcasts, and more.
+
+## Contributions
+To allow for maximum ease of upstream syncing, we should only add blocks and minor changes to `scripts.js`.
+
+If changes to the core of Author Kit are required, they should be done upstream.
 
 ## Getting started
 
