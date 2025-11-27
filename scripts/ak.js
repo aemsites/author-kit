@@ -266,15 +266,25 @@ function decorateHeader() {
   if (breadcrumbs) header.append(breadcrumbs);
 }
 
+function decorateDoc() {
+  decorateHeader();
+  loadTemplate();
+
+  // Setup scheme
+  const scheme = localStorage.getItem('color-scheme');
+  if (scheme) document.body.classList.add(scheme);
+
+  // Detect Hash
+  const pageId = window.location.hash?.replace('#', '');
+  if (pageId) localStorage.setItem('lazyhash', pageId);
+}
+
 export async function loadArea({ area } = { area: document }) {
+  const isDoc = area === document;
+  if (isDoc) decorateDoc();
   decoratePictures(area);
   const { decorateArea } = getConfig();
   if (decorateArea) decorateArea({ area });
-  const isDoc = area === document;
-  if (isDoc) {
-    decorateHeader();
-    loadTemplate();
-  }
   const sections = decorateSections(area, isDoc);
   for (const [idx, section] of sections.entries()) {
     loadIcons(section);
@@ -285,15 +295,3 @@ export async function loadArea({ area } = { area: document }) {
   }
   if (isDoc) import('./lazy.js');
 }
-
-(function init() {
-  // Setup scheme
-  const scheme = localStorage.getItem('color-scheme');
-  if (scheme) document.body.classList.add(scheme);
-
-  // Detect Hash
-  const pageId = window.location.hash?.replace('#', '');
-  if (pageId) {
-    localStorage.setItem('lazyhash', pageId);
-  }
-}());
