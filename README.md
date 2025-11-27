@@ -1,5 +1,5 @@
 # AK Media
-An Author Kit fork expression targeted at news, PR, blogs, podcasts, and more.
+An Author Kit fork targeted at news, PR, blogs, podcasts, and more.
 
 ## Contributions
 To allow for maximum ease of upstream syncing, we should only add blocks and minor changes to `scripts.js`.
