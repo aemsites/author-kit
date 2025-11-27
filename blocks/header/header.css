@@ -194,7 +194,6 @@ header {
 
   .main-nav-section {
     grid-area: nav;
-    overflow: scroll;
 
     .default-content {
       max-width: 100%;
