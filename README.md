@@ -99,6 +99,7 @@ default, quiet, strong, negative
 
 ### Buttons
 accent, primary, secondary, negative
+
 (w/ outline variations)
 
 ### Columns
@@ -109,6 +110,7 @@ accent, primary, secondary, negative
 
 ### Color tokens
 blue, gray, green, magenta, organge, red, purple, yellow
+
 (w/ 100-900 variations)
 
 ### Color Schemes
