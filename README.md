@@ -94,22 +94,29 @@ An auto block is a block generated from a pre-defined piece of content. Often ti
 ### Default content
 Default content is content that lives outside a block.
 
-## Design System Dimensions
+## Design System
 
-### Spacing
+### Spacing & Gap
 XS, S, M, L, XL, XXL
 
 ### Emphasis
 default, quiet, strong, negative
 
-### Container columns
+### Buttons
+accent, primary, secondary, negative
+
+(w/ outline variations)
+
+### Columns
 1 - 12
 
 ### Grid
 1 - 6
 
 ### Color tokens
-100-900
+blue, gray, green, magenta, organge, red, purple, yellow
+
+(w/ 100-900 variations)
 
 ### Color Schemes
 light, dark
