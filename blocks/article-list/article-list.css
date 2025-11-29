@@ -6,6 +6,7 @@
   gap: var(--spacing-l);
 
   a {
+    display: grid;
     text-decoration: none;
   }
 }
