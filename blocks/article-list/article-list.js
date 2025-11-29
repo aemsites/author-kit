@@ -29,15 +29,17 @@ function getExcelDate(excelDate) {
   return jsDate.toLocaleDateString('en-US', options);
 }
 
-async function createCard(article) {
+async function createCard(article, idx) {
   const card = document.createElement('div');
   card.className = 'card';
 
   const row = document.createElement('div');
   const col = document.createElement('div');
 
+  const eager = idx === 0 && !document.querySelector('img');
+
   const picPara = document.createElement('p');
-  const pic = createPicture({ src: article.image });
+  const pic = createPicture({ src: article.image, eager });
   picPara.append(pic);
 
   const date = document.createElement('p');
@@ -110,7 +112,7 @@ function getSortedList(list, sortType) {
 }
 
 async function getElementList(list) {
-  const articlesLoading = list.map((article) => createCard(article));
+  const articlesLoading = list.map((article, idx) => createCard(article, idx));
   const articles = await Promise.all(articlesLoading);
   return articles;
 }
