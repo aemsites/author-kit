@@ -1,0 +1,11 @@
+.article-list {
+  max-width: var(--grid-container-width);
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--spacing-l);
+
+  a {
+    text-decoration: none;
+  }
+}
