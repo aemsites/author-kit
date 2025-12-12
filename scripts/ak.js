@@ -291,7 +291,7 @@ export async function loadArea({ area } = { area: document }) {
     await Promise.all(section.widgets.map((block) => loadBlock(block)));
     await Promise.all(section.blocks.map((block) => loadBlock(block)));
     delete section.dataset.status;
-    if (isDoc && idx === 0) import('./postlcp.js');
+    if (isDoc && idx === 0) import('./postlcp.js').then((mod) => mod.default());
   }
   if (isDoc) import('./lazy.js');
 }
