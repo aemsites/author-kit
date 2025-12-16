@@ -9,7 +9,7 @@ import loadStyle from '../../../scripts/utils/styles.js';
 
 const styles = await loadStyle(import.meta.url);
 
-class ADLTagGen extends LitElement {
+class AKArticleList extends LitElement {
   static properties = {
     path: { attribute: false },
     token: { attribute: false },
@@ -93,13 +93,13 @@ class ADLTagGen extends LitElement {
   }
 }
 
-customElements.define('adl-tag-gen', ADLTagGen);
+customElements.define('ak-article-list', AKArticleList);
 
 (async function init() {
   const { context, token, actions } = await DA_SDK;
   const { org, repo, path } = context;
 
-  const cmp = document.createElement('adl-tag-gen');
+  const cmp = document.createElement('ak-article-list');
   cmp.path = `/${org}/${repo}${path}`;
   cmp.token = token;
   cmp.actions = actions;
