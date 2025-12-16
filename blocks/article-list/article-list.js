@@ -6,9 +6,12 @@ const { codeBase, log } = getConfig();
 const INDEX_NAME = 'query-index.json?limit=5000';
 const ARTICLES_PATH = `${codeBase}/blog/${INDEX_NAME}`;
 
+const pageName = window.location.pathname.split('/').pop();
+
 const FILTER_TYPES = {
   featured: 'yes',
-  author: window.location.pathname.split('/').pop(),
+  author: pageName,
+  tag: pageName,
 };
 
 function getExcelDate(excelDate) {
@@ -29,17 +32,15 @@ function getExcelDate(excelDate) {
   return jsDate.toLocaleDateString('en-US', options);
 }
 
-async function createCard(article, idx) {
+async function createCard(article) {
   const card = document.createElement('div');
   card.className = 'card';
 
   const row = document.createElement('div');
   const col = document.createElement('div');
 
-  const eager = idx === 0 && !document.querySelector('img');
-
   const picPara = document.createElement('p');
-  const pic = createPicture({ src: article.image, eager });
+  const pic = createPicture({ src: article.image });
   picPara.append(pic);
 
   const date = document.createElement('p');
@@ -70,25 +71,23 @@ async function createCard(article, idx) {
 
 function prefixToCamelCase(name) {
   // Remove prefix and optional hyphen
-  const [, ...rest] = name.split('-');
-  const [val, ...vals] = rest;
+  const [val, ...vals] = name.split('-');
   const camelVals = vals.map((str) => str.charAt(0).toUpperCase() + str.slice(1));
 
   return `${val}${camelVals.join('')}`;
 }
 
-function getFilters(variants) {
-  return variants.reduce((acc, cls) => {
-    if (cls.startsWith('filter')) {
-      const type = prefixToCamelCase(cls);
-      acc.push({ type, value: FILTER_TYPES[type] });
-    }
+function getFilters(filterStr) {
+  if (!filterStr) return [];
+  const filtersArr = filterStr.split(',');
+  return filtersArr.reduce((acc, filter) => {
+    const type = prefixToCamelCase(filter);
+    acc.push({ type, value: FILTER_TYPES[type] });
     return acc;
   }, []);
 }
 
-function getSort(variants) {
-  const customSort = variants.find((cls) => cls.startsWith('sort'));
+function getSort(customSort) {
   if (customSort) return prefixToCamelCase(customSort);
   return 'publicationDate';
 }
@@ -103,7 +102,7 @@ function getFilteredList(list, filters) {
 
 function getSortedList(list, sortType) {
   return list.sort((a, b) => {
-    // First compare by date (descending)
+    // First compare by publicationDate (descending)
     if (a[sortType] !== b[sortType]) return b[sortType] - a[sortType];
 
     // If dates are equal, compare by lastModified (descending)
@@ -112,9 +111,15 @@ function getSortedList(list, sortType) {
 }
 
 async function getElementList(list) {
-  const articlesLoading = list.map((article, idx) => createCard(article, idx));
+  const articlesLoading = list.map((article) => createCard(article));
   const articles = await Promise.all(articlesLoading);
-  return articles;
+
+  const listEl = document.createElement('div');
+  listEl.className = 'article-list';
+
+  listEl.append(...articles);
+
+  return listEl;
 }
 
 async function getBaseList() {
@@ -127,30 +132,40 @@ async function getBaseList() {
   return data || [];
 }
 
-export default async function init(el) {
+export default async function init(a) {
+  const { searchParams } = new URL(a.href);
+  const filter = searchParams.get('filter');
+  const customSort = searchParams.get('sort');
+  const limit = searchParams.get('limit');
+  // const paginate = searchParams.get('pagination');
+
   const baseList = await getBaseList();
   if (!baseList) {
     log('No articles found.');
     return;
   }
 
-  const variants = [...el.classList];
-  const filters = getFilters(variants);
-  const sort = getSort(variants);
-
+  // Filter the list
+  const filters = getFilters(filter);
   const filteredList = getFilteredList(baseList, filters);
   if (!filteredList.length) {
-    log('No articles available for supplied filter.');
+    log('No articles available for the supplied filter.');
     return;
   }
 
+  // Sort the list
+  const sort = getSort(customSort);
   const sortedList = getSortedList(filteredList, sort);
-  const elementList = await getElementList(sortedList);
-  if (!elementList.length) {
+
+  // Limit the list
+  const limitedList = limit ? sortedList.slice(0, limit) : sortedList;
+
+  // Build the DOM
+  const elementList = await getElementList(limitedList);
+  if (!elementList) {
     log('Could not create elements');
     return;
   }
 
-  el.replaceChildren();
-  el.append(...elementList);
+  a.parentElement.replaceChild(elementList, a);
 }

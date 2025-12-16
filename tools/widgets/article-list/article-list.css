@@ -1,0 +1,18 @@
+:host {
+  display: block;
+  padding: 0 16px 16px;
+}
+
+.title {
+  margin: 0;
+  font-weight: 700;
+}
+
+sl-select,
+sl-input {
+  margin-bottom: 6px;
+}
+
+.actions {
+  margin-top: 12px;
+}
