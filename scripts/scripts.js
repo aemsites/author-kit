@@ -17,6 +17,7 @@ const widgets = [
   { fragment: '/fragments/' },
   { schedule: '/schedules/' },
   { youtube: 'https://www.youtube' },
+  { 'article-list': '/tools/widgets/article-list' },
 ];
 
 // Blocks with self-managed styles
