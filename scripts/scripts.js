@@ -34,7 +34,7 @@ const decorateArea = ({ area = document }) => {
   eagerLoad(area, 'img');
 };
 
-async function loadPage() {
+export async function loadPage() {
   setConfig({ hostnames, locales, widgets, components, decorateArea });
   await loadArea();
 }
