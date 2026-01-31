@@ -7,6 +7,10 @@
     <script src="/deps/rum.js" type="module"></script>
     <script src="/scripts/ak.js" type="module"></script>
     <script src="/scripts/scripts.js" type="module"></script>
+    <script nonce="aem" type="module">
+      import sampleRUM from '/deps/rum.js';
+      sampleRUM('404', { source: document.referrer });
+    </script>
     <link rel="icon" href="data:,">
   </head>
   <body>
