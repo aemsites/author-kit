@@ -12,8 +12,7 @@ const locales = {
   '/zh': { lang: 'zh' },
 };
 
-// Widget patterns to look for
-const widgets = [
+const linkBlocks = [
   { fragment: '/fragments/' },
   { schedule: '/schedules/' },
   { youtube: 'https://www.youtube' },
@@ -35,7 +34,7 @@ const decorateArea = ({ area = document }) => {
 };
 
 export async function loadPage() {
-  setConfig({ hostnames, locales, widgets, components, decorateArea });
+  setConfig({ hostnames, locales, linkBlocks, components, decorateArea });
   await loadArea();
 }
 await loadPage();

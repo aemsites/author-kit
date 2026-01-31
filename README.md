@@ -55,9 +55,11 @@ For projects that want a few more batteries. Built by the team who brought you d
 ### Scheduled content
 * Schedule content using spreadsheets
 
-### Sidekick
+### Sidekick & pre-production
 * Extensible plumbing for plugins
 * Schedule simulator
+* Quick Edit
+* Convert production links to relative
 
 ### Performance
 * Extensible LCP detection
@@ -99,7 +101,6 @@ default, quiet, strong, negative
 
 ### Buttons
 accent, primary, secondary, negative
-
 (w/ outline variations)
 
 ### Columns
@@ -110,8 +111,7 @@ accent, primary, secondary, negative
 
 ### Color tokens
 blue, gray, green, magenta, organge, red, purple, yellow
-
 (w/ 100-900 variations)
 
-### Color Schemes
+### Color schemes
 light, dark

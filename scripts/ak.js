@@ -6,7 +6,7 @@ export function getMetadata(name) {
   return meta && meta.content;
 }
 
-export function getLocale(locales) {
+export function getLocale(locales = { '': {} }) {
   const { pathname } = window.location;
   const matches = Object.keys(locales).filter((locale) => pathname.startsWith(`${locale}/`));
   const prefix = getMetadata('locale') || matches.sort((a, b) => b.length - a.length)?.[0] || '';
@@ -132,7 +132,7 @@ function decorateButton(link) {
 export function localizeUrl({ config, url }) {
   const { locales, locale } = config;
 
-  // If we are in the root locale, do nothing
+  // If in root locale, do nothing
   if (locale.prefix === '') return null;
 
   const { origin, pathname, search, hash } = url;
@@ -166,21 +166,23 @@ function decorateHash(a, url) {
   return { dnt, dnb };
 }
 
-function decorateLink(config, a) {
+export function decorateLink(config, a) {
   try {
     const url = new URL(a.href);
     const hostMatch = config.hostnames.some((host) => url.hostname.endsWith(host));
     if (hostMatch) a.href = a.href.replace(url.origin, '');
 
+    const isRelative = a.getAttribute('href').startsWith('/');
+
     const { dnt, dnb } = decorateHash(a, url);
-    if (!dnt) {
+    if (isRelative || !dnt) {
       const localized = localizeUrl({ config, url });
       if (localized) a.href = localized.href;
     }
     decorateButton(a);
     if (!dnb) {
       const { href } = a;
-      const found = config.widgets.some((pattern) => {
+      const found = config.linkBlocks.some((pattern) => {
         const key = Object.keys(pattern)[0];
         if (!href.includes(pattern[key])) return false;
         a.classList.add(key, 'auto-block');
@@ -242,7 +244,7 @@ function decorateSections(parent, isDoc) {
     section.classList.add('section');
     section.dataset.status = 'decorated';
 
-    section.widgets = decorateLinks(section);
+    section.linkBlocks = decorateLinks(section);
     section.blocks = [...section.querySelectorAll('.block-content > div[class]')];
     return section;
   });
@@ -288,7 +290,7 @@ export async function loadArea({ area } = { area: document }) {
   const sections = decorateSections(area, isDoc);
   for (const [idx, section] of sections.entries()) {
     loadIcons(section);
-    await Promise.all(section.widgets.map((block) => loadBlock(block)));
+    await Promise.all(section.linkBlocks.map((block) => loadBlock(block)));
     await Promise.all(section.blocks.map((block) => loadBlock(block)));
     delete section.dataset.status;
     if (isDoc && idx === 0) import('./postlcp.js').then((mod) => mod.default());

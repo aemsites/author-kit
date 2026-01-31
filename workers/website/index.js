@@ -45,9 +45,12 @@ const getRedirect = (resp, savedSearch) => {
 };
 
 const getRUMRequest = (request, url) => {
-  if (!isRUMRequest(url)) return null;
-  if (['GET', 'POST', 'OPTIONS'].includes(request.method)) return null;
-  return new Response('Method Not Allowed', { status: 405 });
+  if (isRUMRequest(url)) {
+    if (!['GET', 'POST', 'OPTIONS'].includes(request.method)) {
+      return new Response('Method Not Allowed', { status: 405 });
+    }
+  }
+  return null;
 };
 
 const formatSearchParams = (url) => {
