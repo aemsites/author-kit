@@ -30,10 +30,19 @@ export const [setConfig, getConfig] = (() => {
   ];
 })();
 
-export async function loadStyle(href, el = document) {
-  const styles = await import(href, { with: { type: 'css' } });
-  if (el.adoptedStyleSheets.includes(styles.default)) return;
-  el.adoptedStyleSheets.push(styles.default);
+export async function loadStyle(href) {
+  return new Promise((resolve) => {
+    if (!document.querySelector(`head > link[href="${href}"]`)) {
+      const link = document.createElement('link');
+      link.rel = 'stylesheet';
+      link.href = href;
+      link.onload = resolve;
+      link.onerror = resolve;
+      document.head.append(link);
+    } else {
+      resolve();
+    }
+  });
 }
 
 export async function loadBlock(block) {
