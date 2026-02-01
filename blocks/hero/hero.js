@@ -35,7 +35,7 @@ function decorateForeground(fg) {
   const { children } = fg;
   for (const [idx, child] of [...children].entries()) {
     const heading = child.querySelector('h1, h2, h3, h4, h5, h6');
-    const text = heading || child.querySelector('p');
+    const text = heading || child.querySelector('p, a, ul');
     if (heading) {
       heading.classList.add('hero-heading');
       const detail = heading.previousElementSibling;
