@@ -8,7 +8,7 @@ export default [
   // Airbnb base config
   ...airbnb,
 
-  // Ignore patterns (migrated from .eslintignore)
+  // Ignore patterns
   { ignores: ['deps/**', 'eslint.config.js'] },
 
   // Global settings for all files

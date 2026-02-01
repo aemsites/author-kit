@@ -1,4 +1,4 @@
-const log = async (ex, el) => (await import('./utils/error.js')).default(ex, el);
+const LOG = async (ex, el) => (await import('./utils/error.js')).default(ex, el);
 
 export function getMetadata(name) {
   const attr = name && name.includes(':') ? 'property' : 'name';
@@ -20,7 +20,7 @@ export const [setConfig, getConfig] = (() => {
     (conf = {}) => {
       config = {
         ...conf,
-        log: conf.log || log,
+        log: conf.log || LOG,
         locale: getLocale(conf.locales),
         codeBase: `${import.meta.url.replace('/scripts/ak.js', '')}`,
       };
@@ -30,38 +30,29 @@ export const [setConfig, getConfig] = (() => {
   ];
 })();
 
-export async function loadStyle(href) {
-  return new Promise((resolve) => {
-    if (!document.querySelector(`head > link[href="${href}"]`)) {
-      const link = document.createElement('link');
-      link.rel = 'stylesheet';
-      link.href = href;
-      link.onload = resolve;
-      link.onerror = resolve;
-      document.head.append(link);
-    } else {
-      resolve();
-    }
-  });
+export async function loadStyle(href, el = document) {
+  const styles = await import(href, { with: { type: 'css' } });
+  if (el.adoptedStyleSheets.includes(styles.default)) return;
+  el.adoptedStyleSheets.push(styles.default);
 }
 
 export async function loadBlock(block) {
-  const { components } = getConfig();
+  const { codeBase, log, components } = getConfig();
   const { classList } = block;
   const name = classList[0];
   block.dataset.blockName = name;
-  const blockPath = `/blocks/${name}/${name}`;
-  const loaded = [new Promise((resolve) => {
+  const blockPath = `${codeBase}/blocks/${name}/${name}`;
+  const loading = [new Promise((resolve) => {
     (async () => {
       try {
         await (await import(`${blockPath}.js`)).default(block);
-      } catch (ex) { await getConfig().log(ex, block); }
+      } catch (ex) { log(ex, block); }
       resolve();
     })();
   })];
   const isCmp = components.some((cmp) => name === cmp);
-  if (!isCmp) loaded.push(loadStyle(`${blockPath}.css`));
-  await Promise.all(loaded);
+  if (!isCmp) loading.push(loadStyle(`${blockPath}.css`));
+  await Promise.all(loading);
   return block;
 }
 
@@ -240,10 +231,8 @@ function decorateSections(parent, isDoc) {
   return [...parent.querySelectorAll(selector)].map((section) => {
     const groups = groupChildren(section);
     section.append(...groups);
-
     section.classList.add('section');
     section.dataset.status = 'decorated';
-
     section.linkBlocks = decorateLinks(section);
     section.blocks = [...section.querySelectorAll('.block-content > div[class]')];
     return section;
@@ -272,11 +261,9 @@ function decorateDoc() {
   decorateHeader();
   loadTemplate();
 
-  // Setup scheme
   const scheme = localStorage.getItem('color-scheme');
   if (scheme) document.body.classList.add(scheme);
 
-  // Detect Hash
   const pageId = window.location.hash?.replace('#', '');
   if (pageId) localStorage.setItem('lazyhash', pageId);
 }

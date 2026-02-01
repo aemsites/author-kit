@@ -27,6 +27,30 @@ async function loadLocalizedEvent(event) {
   }
 }
 
+/**
+ * Determine what ancestor to replace with the fragment
+ *
+ * @param {Element}} a the fragment link
+ * @returns the element that can be replaced
+ */
+function getReplaceEl(a) {
+  let current = a;
+  const ancestor = a.closest('.section');
+
+  // Walk up the DOM from child to ancestor
+  // Break when there is more than one child
+  while (current && current !== ancestor) {
+    const childCount = current.parentElement.children.length;
+    if (childCount <= 1) {
+      current = current.parentElement;
+    } else {
+      break;
+    }
+  }
+
+  return current;
+}
+
 async function loadEvent(a, event, defEvent) {
   // If no fragment path on purpose, remove the schedule.
   if (!event.fragment) {
@@ -42,29 +66,15 @@ async function loadEvent(a, event, defEvent) {
     removeSchedule(a);
     return;
   }
-
-  let count = 0;
-  let current = a;
-  const parent = a.closest('.section');
-
-  // Walk up the DOM tree from child to parent
-  while (current && current !== parent) {
-    current = current.parentElement;
-    if (current && current !== parent) {
-      count += 1;
-    }
+  const elToReplace = getReplaceEl(a);
+  const sections = fragment.querySelectorAll(':scope > .section');
+  const children = sections.length === 1
+    ? fragment.querySelectorAll(':scope > *')
+    : [fragment];
+  for (const child of children) {
+    elToReplace.insertAdjacentElement('afterend', child);
   }
-
-  // Do 1:1 swap if parent is a section
-  if (count === 2) {
-    const sections = fragment.querySelectorAll(':scope > .section');
-    for (const section of sections) {
-      parent.insertAdjacentElement('afterend', section);
-    }
-    parent.remove();
-  } else {
-    a.parentElement.replaceChild(fragment, a);
-  }
+  elToReplace.remove();
 }
 
 function getDate() {
@@ -84,7 +94,6 @@ export default async function init(a) {
     return;
   }
   const { data } = await resp.json();
-  // Look
   data.reverse();
   const now = getDate();
   const found = data.find((evt) => {
