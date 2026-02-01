@@ -1,6 +1,7 @@
 {
   "name": "nx-boilerplate",
   "version": "1.3.0",
+  "type": "module",
   "description": "An extremely minimal boilerplate for AEM.",
   "scripts": {
     "lint:js": "eslint .",
@@ -23,23 +24,20 @@
   },
   "homepage": "https://github.com/adobe/aem-boilerplate#readme",
   "devDependencies": {
-    "@babel/core": "7.24.5",
-    "@babel/eslint-parser": "7.24.5",
     "@esm-bundle/chai": "4.3.4-fix.0",
+    "@stylistic/eslint-plugin": "^5.7.1",
     "@web/dev-server-import-maps": "^0.2.0",
     "@web/test-runner": "^0.18.0",
     "@web/test-runner-commands": "0.9.0",
+    "airbnb-eslint9": "^1.0.3",
     "chai": "4.4.1",
     "eslint": "^9.39.2",
-    "eslint-config-airbnb-base": "15.0.0",
-    "eslint-plugin-chai-friendly": "^0.7.2",
-    "eslint-plugin-compat": "^4.0.2",
-    "eslint-plugin-ecmalist": "^1.0.8",
-    "eslint-plugin-import": "2.29.1",
-    "sinon": "13.0.2",
-    "stylelint": "14.6.0",
-    "stylelint-config-prettier": "9.0.5",
-    "stylelint-config-standard": "25.0.0"
+    "eslint-plugin-chai-friendly": "^1.1.0",
+    "eslint-plugin-import": "^2.32.0",
+    "globals": "^16.0.0",
+    "sinon": "^21.0.1",
+    "stylelint": "^17.1.0",
+    "stylelint-config-standard": "^40.0.0"
   },
   "dependencies": {
     "esbuild": "^0.25.10",

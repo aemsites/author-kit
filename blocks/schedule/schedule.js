@@ -22,7 +22,7 @@ async function loadLocalizedEvent(event) {
     const fragment = await loadFragment(path);
     return fragment;
   } catch {
-    console.log(`Error fetching ${path} fragment`);
+    config.log(`Error fetching ${path} fragment`);
     return null;
   }
 }
