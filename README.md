@@ -31,6 +31,7 @@ For projects that want a few more batteries. Built by the team who brought you d
 ### Flexible section authoring
 * Optional containers to constrain content
 * Grids: 1-6
+* Columns: 1-12
 * Color scheme: light, dark
 * Gap: xs, s, m, l, xl, xxl
 * Spacing: xs, s, m, l, xl, xxl
@@ -56,9 +57,9 @@ For projects that want a few more batteries. Built by the team who brought you d
 * Schedule content using spreadsheets
 
 ### Sidekick & pre-production
+* Quick Edit
 * Extensible plumbing for plugins
 * Schedule simulator
-* Quick Edit
 * Convert production links to relative
 
 ### Performance
@@ -97,7 +98,7 @@ Default content is content that lives outside a block.
 XS, S, M, L, XL, XXL
 
 ### Emphasis
-default, quiet, strong, negative
+quiet, default, strong, negative
 
 ### Buttons
 accent, primary, secondary, negative
