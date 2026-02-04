@@ -40,11 +40,9 @@ export async function loadPage() {
 await loadPage();
 
 (function da() {
-  const ref = new URL(window.location.href).searchParams.get('dapreview');
-  if (ref) import('../tools/da/da.js').then((mod) => mod.default(loadPage));
-}());
-
-(function quickEdit() {
-  const hasQE = new URL(window.location.href).searchParams.has('quick-edit');
+  const { searchParams } = new URL(window.location.href);
+  const hasPreview = searchParams.has('dapreview');
+  if (hasPreview) import('../tools/da/da.js').then((mod) => mod.default(loadPage));
+  const hasQE = searchParams.has('quick-edit');
   if (hasQE) import('../tools/quick-edit/quick-edit.js').then((mod) => mod.default());
 }());
