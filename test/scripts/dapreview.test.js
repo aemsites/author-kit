@@ -2,14 +2,14 @@ import { expect } from '@esm-bundle/chai';
 
 // Set query param before importing scripts module
 const originalUrl = window.location.href;
-history.pushState({}, '', '?dapreview=true');
+window.history.pushState({}, '', '?dapreview=true');
 
 // Now import - module will see the dapreview param
 await import('../../scripts/scripts.js');
 
 describe('dapreview', () => {
   after(() => {
-    history.pushState({}, '', originalUrl);
+    window.history.pushState({}, '', originalUrl);
   });
 
   it('should detect dapreview query parameter', () => {

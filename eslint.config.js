@@ -1,73 +1,77 @@
+import { defineConfig, globalIgnores } from 'eslint/config';
 import globals from 'globals';
-import stylistic from '@stylistic/eslint-plugin';
-import importPlugin from 'eslint-plugin-import';
-import airbnb from 'airbnb-eslint9';
-import chaiFriendly from 'eslint-plugin-chai-friendly';
+import { recommended, source, test } from '@adobe/eslint-config-helix';
 
-export default [
-  // Airbnb base config
-  ...airbnb,
-
-  // Ignore patterns
-  { ignores: ['deps/**', 'eslint.config.js'] },
-
-  // Global settings for all files
+export default defineConfig([
+  globalIgnores([
+    '**/deps',
+  ]),
   {
     languageOptions: {
-      ecmaVersion: 'latest',
-      sourceType: 'module',
+      ...recommended.languageOptions,
       globals: {
+        ...globals.serviceworker,
         ...globals.browser,
-      },
-    },
-    rules: {
-      'no-param-reassign': ['error', { props: false }],
-      'class-methods-use-this': 'off',
-      'import/no-extraneous-dependencies': 'off',
-      'import/no-unresolved': 'off',
-      'import/prefer-default-export': 'off',
-      'import/no-cycle': 'off',
-      'linebreak-style': ['error', 'unix'],
-      'no-await-in-loop': 'off',
-      'no-underscore-dangle': ['error', { allowAfterThis: true }],
-      'import/extensions': ['error', { js: 'always' }],
-      'object-curly-newline': ['error', { ObjectExpression: { multiline: true, minProperties: 6 }, ObjectPattern: { multiline: true, minProperties: 6 }, ImportDeclaration: { multiline: true, minProperties: 6 }, ExportDeclaration: { multiline: true, minProperties: 6 } }],
-      '@stylistic/object-curly-newline': ['error', { ObjectExpression: { multiline: true, minProperties: 6 }, ObjectPattern: { multiline: true, minProperties: 6 }, ImportDeclaration: { multiline: true, minProperties: 6 }, ExportDeclaration: { multiline: true, minProperties: 6 } }],
-      'no-restricted-syntax': [
-        'error',
-        {
-          selector: 'ForInStatement',
-          message: 'for..in loops iterate over the entire prototype chain. Use Object.{keys,values,entries}, and iterate over the resulting array.',
-        },
-        {
-          selector: 'LabeledStatement',
-          message: 'Labels are a form of GOTO; using them makes code confusing and hard to maintain and understand.',
-        },
-        {
-          selector: 'WithStatement',
-          message: '`with` is disallowed in strict mode because it makes code impossible to predict and optimize.',
-        },
-      ],
-    },
-  },
-
-  // Test files configuration
-  {
-    files: ['test/**/*.js', '**/*.test.js'],
-    plugins: {
-      'chai-friendly': chaiFriendly,
-    },
-    languageOptions: {
-      globals: {
         ...globals.mocha,
+        ...globals.es6,
+        __rootdir: true,
       },
     },
-    rules: {
-      'no-unused-expressions': 'off',
-      'chai-friendly/no-unused-expressions': 'error',
+    settings: {
+      'import/core-modules': ['eslint/config'],
     },
-  },
+    rules: {
+      'class-methods-use-this': 0,
 
-  // Plugins required by airbnb-eslint9
-  { plugins: { '@stylistic': stylistic, import: importPlugin } },
-];
+      // headers not required to keep file size down
+      'header/header': 0,
+
+      'import/no-cycle': 'off',
+
+      'import/no-unresolved': ['error', {
+        ignore: ['^https?://']
+      }],
+
+      'import/prefer-default-export': 0,
+
+      'indent': ['error', 2, {
+        ignoredNodes: ['TemplateLiteral *'],
+        SwitchCase: 1,
+      }],
+
+      'max-statements-per-line': ['error', { max: 2 }],
+
+      'no-await-in-loop': 0,
+
+      'no-param-reassign': [2, { props: false }],
+
+      'no-unused-vars': ['error', {
+        argsIgnorePattern: '^_$|^e$',
+        caughtErrorsIgnorePattern: '^_$|^e$',
+        varsIgnorePattern: '^_$|^e$',
+      }],
+
+      'object-curly-newline': ['error', {
+        multiline: true,
+        minProperties: 6,
+        consistent: true,
+      }],
+    },
+    plugins: {
+      import: recommended.plugins.import,
+    },
+    extends: [recommended],
+  },
+  source,
+  test,
+  {
+    // Allow console in test files
+    files: ['test/**/*.js'],
+    rules: {
+      'max-classes-per-file': 0,
+      'no-console': 'off',
+      'no-underscore-dangle': 0,
+      'no-unused-expressions': 0,
+    },
+  }
+]);

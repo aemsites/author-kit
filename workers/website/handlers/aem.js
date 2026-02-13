@@ -1,9 +1,3 @@
-const findSheetValue = (data, key) => {
-  const found = data.find((row) => row.key === key);
-  if (found) return found.value;
-  return `No ${key} found.`;
-};
-
 const getRedirect = (resp, savedSearch) => {
   if (!(resp.status === 301 && savedSearch)) return;
   const location = resp.headers.get('location');
