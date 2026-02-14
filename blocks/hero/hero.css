@@ -31,12 +31,12 @@
   }
 
   &.quiet-background {
-    picture {
-      opacity: 0.5;
-    }
-
-    .hero-foreground {
-      color: var(--color-text);
+    .hero-background div::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      backdrop-filter: blur(200px);
+      mask-image: linear-gradient(to right bottom, rgb(0 0 0 / 80%) 40%, rgb(0 0 0 / 20%) 125%);
     }
   }
 
