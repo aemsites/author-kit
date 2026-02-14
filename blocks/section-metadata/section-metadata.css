@@ -160,6 +160,49 @@
       --section-container-width: calc(var(--grid-column-width) * 6);
     }
   }
+
+  .section.layout-bento {
+    .block-content {
+      --grid-container-width: 83.4%;
+
+      gap: var(--gap-spacing);
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      grid-template-areas:
+        "one   one   two"
+        "one   one   three"
+        "four  five  five";
+
+      > * {
+        /* blocks can use a container query */
+        container-type: inline-size;
+      }
+
+      > *:nth-child(1) {
+        grid-area: one;
+      }
+
+      > *:nth-child(2) {
+        grid-area: two;
+      }
+
+      > *:nth-child(3) {
+        grid-area: three;
+      }
+
+      > *:nth-child(4) {
+        grid-area: four;
+      }
+
+      > *:nth-child(5) {
+        grid-area: five;
+      }
+
+      > *:nth-child(6) {
+        grid-area: six;
+      }
+    }
+  }
 }
 
 @media (width >= 1200px) {
