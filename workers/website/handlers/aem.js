@@ -52,7 +52,7 @@ export const fetchFromAem = async ({ request, cache, savedSearch }) => {
 export async function fetchSchedule({ request, cache, savedSearch }) {
   const resp = await fetchFromAem({ request, cache, savedSearch });
 
-  if (resp.status === 301) return resp;
+  if (resp.status === 301 || resp.status === 304) return resp;
 
   return formatSchedule(resp);
 }

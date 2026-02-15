@@ -202,8 +202,7 @@ export function decorateLink(config, a) {
       if (found) return a;
     }
   } catch (ex) {
-    config.log('Could not decorate link');
-    config.log(ex);
+    config.log('Could not decorate link', ex);
   }
   return null;
 }
@@ -228,7 +227,6 @@ function groupChildren(section) {
   const children = section.querySelectorAll(':scope > *');
   const groups = [];
   let currentGroup = null;
-
   for (const child of children) {
     const isDiv = child.tagName === 'DIV';
     const currentType = currentGroup?.classList.contains('block-content');
@@ -242,7 +240,6 @@ function groupChildren(section) {
 
     currentGroup.append(child);
   }
-
   return groups;
 }
 

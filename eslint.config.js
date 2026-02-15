@@ -21,41 +21,42 @@ export default defineConfig([
       'import/core-modules': ['eslint/config'],
     },
     rules: {
-      'class-methods-use-this': 0,
-
-      // headers not required to keep file size down
-      'header/header': 0,
-
-      'import/no-cycle': 'off',
-
-      'import/no-unresolved': ['error', {
-        ignore: ['^https?://']
-      }],
-
-      'import/prefer-default-export': 0,
-
-      'indent': ['error', 2, {
-        ignoredNodes: ['TemplateLiteral *'],
-        SwitchCase: 1,
-      }],
-
-      'max-statements-per-line': ['error', { max: 2 }],
-
+      // it's 2026
       'no-await-in-loop': 0,
 
-      'no-param-reassign': [2, { props: false }],
-
-      'no-unused-vars': ['error', {
-        argsIgnorePattern: '^_$|^e$',
-        caughtErrorsIgnorePattern: '^_$|^e$',
-        varsIgnorePattern: '^_$|^e$',
-      }],
-
+      // it's 2026, six is sensible (if they're short names)
       'object-curly-newline': ['error', {
         multiline: true,
         minProperties: 6,
         consistent: true,
       }],
+
+      // existing rule is placebo in AEM projects
+      'import/no-cycle': 'off',
+
+      // common to have loops that run a single function
+      'max-statements-per-line': ['error', { max: 2 }],
+
+      // customer projects should not have license headers
+      // unless they open source and want them.
+      'header/header': 0,
+
+      // quality of life for classes & web components
+      'class-methods-use-this': 0,
+
+      // allow external evergreen imports
+      'import/no-unresolved': ['error', {
+        ignore: ['^https?://']
+      }],
+
+      // allow template literals to span lines without looking weird
+      'indent': ['error', 2, {
+        ignoredNodes: ['TemplateLiteral *'],
+        SwitchCase: 1,
+      }],
+
+      // allow objct property mutations
+      'no-param-reassign': [2, { props: false }],
     },
     plugins: {
       import: recommended.plugins.import,
