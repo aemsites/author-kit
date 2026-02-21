@@ -1,0 +1,44 @@
+[
+  {
+    "id": "main",
+    "components": [
+      "section"
+    ]
+  },
+  {
+    "id": "section",
+    "components": [
+
+      "card",
+      "columns",
+      "fragment",
+      "hero",
+      "image",
+      "advanced-tabs",
+      "table",
+      "text",
+      "video"
+    ]
+  },
+  {
+    "id": "card",
+    "components": []
+  },
+  {
+    "id": "columns",
+    "components": [
+      "columns-row"
+    ]
+  },
+  {
+    "id": "columns-row",
+    "components": []
+  },
+  {
+    "id": "columns-cell",
+    "components": [
+      "text",
+      "image"
+    ]
+  },
+]
