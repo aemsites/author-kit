@@ -78,8 +78,9 @@ export async function loadBlock(block) {
 }
 
 function loadTemplate() {
-  const template = getMetadata('template');
-  if (!template) return;
+  const meta = getMetadata('template');
+  if (!meta) return;
+  const template = meta.replaceAll(' ', '-').toLowerCase();
   const { codeBase } = getConfig();
   document.body.classList.add('has-template');
   loadStyle(`${codeBase}/templates/${template}/${template}.css`).then(() => {

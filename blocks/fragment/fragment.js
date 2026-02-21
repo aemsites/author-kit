@@ -76,7 +76,10 @@ function getReplaceEl(a) {
 }
 
 export default async function init(a) {
-  const path = a.getAttribute('href');
+  const { hostname, pathname } = a;
+  // Make URL relative for services that don't respect `.aem.` conventions.
+  const makeRelative = ['.da.', '.aem.', 'local'].some((host) => hostname.includes(host));
+  const path = makeRelative ? pathname : a.href;
   const fragment = await loadFragment(path);
   if (fragment) {
     const elToReplace = getReplaceEl(a);
