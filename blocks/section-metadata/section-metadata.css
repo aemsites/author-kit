@@ -89,10 +89,14 @@
   }
 
   > .default-content {
-    margin-bottom: calc(var(--top-bottom-spacing) / 2);
+    margin-bottom: calc(var(--top-bottom-spacing) / 3);
 
     > *:first-child {
       margin-top: 0;
+    }
+
+    > *:last-child {
+      margin-bottom: 0;
     }
   }
 
