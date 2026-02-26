@@ -141,6 +141,12 @@
       display: grid;
       grid-template-columns: repeat(var(--grid-size), 1fr);
     }
+
+    &.peek-background-xxl {
+      .default-content {
+        margin-bottom: calc(var(--spacing-xxl) * 12);
+      }
+    }
   }
 }
 
