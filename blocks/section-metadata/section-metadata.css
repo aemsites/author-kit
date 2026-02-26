@@ -160,12 +160,6 @@
       display: grid;
       grid-template-columns: repeat(var(--grid-size), 1fr);
     }
-
-    &.peek-background-xxl {
-      .default-content {
-        margin-bottom: calc(var(--spacing-xxl) * 12);
-      }
-    }
   }
 }
 
@@ -183,6 +177,16 @@
 
     &.container.container-6 {
       --section-container-width: calc(var(--grid-column-width) * 6);
+    }
+
+    &.peek-background {
+      .section-background img {
+        object-position: 0 40%;
+      }
+
+      .default-content {
+        margin-bottom: calc(var(--spacing-xxl) * 12);
+      }
     }
   }
 
