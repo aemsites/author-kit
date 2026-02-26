@@ -3,7 +3,7 @@ main = "index.js"
 compatibility_date = "2025-02-14"
 keep_vars = true
 
-vars = { AEM_HOSTNAME = "main--author-kit--aemsites.aem.live" }
+vars = { AEM_ORG = "aemsites", AEM_SITE = "author-kit" }
 
 [env.dev]
-vars = { ENVIRONMENT = "dev", AEM_HOSTNAME = "main--author-kit--aemsites.aem.live" }
+vars = { AEM_ORG = "aemsites", AEM_SITE = "author-kit" }

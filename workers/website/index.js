@@ -10,6 +10,33 @@
  * governing permissions and limitations under the License.
  */
 
+import { fetchSchedule, fetchFromAem } from './handlers/aem.js';
+import fetchDaSc from './handlers/dasc.js';
+
+const ROUTES = [
+  // Handle schedule manifests
+  {
+    match: (path) => path.includes('/schedules/') && path.endsWith('json'),
+    handler: fetchSchedule,
+  },
+  // Handle structured content
+  {
+    match: (path) => path.includes('/dasc/') && path.endsWith('json'),
+    handler: fetchDaSc,
+  },
+  // Handle drafts
+  {
+    match: (path) => path.startsWith('/drafts'),
+    handler: () => new Response('Not found - drafts are denied on production.', { status: 404 }),
+  },
+  // Default AEM handler should be last
+  {
+    match: () => true,
+    handler: fetchFromAem,
+    cache: true,
+  },
+];
+
 const getExtension = (path) => {
   const basename = path.split('/').pop();
   const pos = basename.lastIndexOf('.');
@@ -18,11 +45,6 @@ const getExtension = (path) => {
 
 const isMediaRequest = (url) => /\/media_[0-9a-f]{40,}[/a-zA-Z0-9_-]*\.[0-9a-z]+$/.test(url.pathname);
 const isRUMRequest = (url) => /\/\.(rum|optel)\/.*/.test(url.pathname);
-
-const getDraft = (url) => {
-  if (!url.pathname.startsWith('/drafts/')) return null;
-  return new Response('Not Found', { status: 404 });
-};
 
 const getPortRedirect = (request, url) => {
   if (url.port && url.hostname !== 'localhost') {
@@ -34,14 +56,6 @@ const getPortRedirect = (request, url) => {
     });
   }
   return null;
-};
-
-const getRedirect = (resp, savedSearch) => {
-  if (!(resp.status === 301 && savedSearch)) return;
-  const location = resp.headers.get('location');
-  if (location && !location.match(/\?.*$/)) {
-    resp.headers.set('location', `${location}${savedSearch}`);
-  }
 };
 
 const getRUMRequest = (request, url) => {
@@ -74,10 +88,11 @@ const formatSearchParams = (url) => {
 };
 
 const formatRequest = (env, request, url) => {
-  url.hostname = env.AEM_HOSTNAME;
-  url.port = '';
-  url.protocol = 'https:';
-  const req = new Request(url, request);
+  const aemUrl = new URL(url.href);
+  aemUrl.hostname = `main--${env.AEM_SITE}--${env.AEM_ORG}.aem.live`;
+  aemUrl.port = '';
+  aemUrl.protocol = 'https:';
+  const req = new Request(aemUrl, request);
   req.headers.set('x-forwarded-host', req.headers.get('host'));
   req.headers.set('x-byo-cdn-type', 'cloudflare');
   if (env.PUSH_INVALIDATION !== 'disabled') {
@@ -89,57 +104,9 @@ const formatRequest = (env, request, url) => {
   return req;
 };
 
-const getSchedule = async (pathname, response) => {
-  if (!(pathname.includes('/schedules/') && pathname.endsWith('json'))) return null;
-
-  const schedule2Response = (json) => new Response(JSON.stringify(json), response);
-
-  const json = await response.json();
-  if (!json.data?.[0]?.fragment) return schedule2Response(json);
-
-  const data = [];
-  for (const [idx, schedule] of json.data.entries()) {
-    const { start, end } = schedule;
-
-    // Presumably the default fragment
-    if (!start && !end) {
-      data.push(json.data[idx]);
-    } else {
-      const now = Date.now();
-      const startDate = new Date(start);
-      const endDate = new Date(end);
-      if (startDate < now && endDate > now) data.push(json.data[idx]);
-    }
-  }
-
-  return schedule2Response({ ...json, data });
-};
-
-const getCachability = ({ pathname }) => !(pathname.includes('/schedules/') && pathname.endsWith('json'));
-
-const fetchFromOrigin = async (req, cacheEverything, savedSearch) => {
-  let resp = await fetch(req, { method: req.method, cf: { cacheEverything } });
-  resp = new Response(resp.body, resp);
-
-  // Handle redirects
-  const redirectResp = getRedirect(resp, savedSearch);
-  if (redirectResp) return redirectResp;
-
-  // 304 Not Modified - remove CSP header
-  if (resp.status === 304) resp.headers.delete('Content-Security-Policy');
-
-  resp.headers.delete('age');
-  resp.headers.delete('x-robots-tag');
-
-  return resp;
-};
-
 export default {
   async fetch(req, env) {
     const url = new URL(req.url);
-
-    const draftResp = getDraft(url);
-    if (draftResp) return draftResp;
 
     const portResp = getPortRedirect(req, url);
     if (portResp) return portResp;
@@ -149,15 +116,10 @@ export default {
 
     const request = formatRequest(env, req, url);
 
-    const cacheable = getCachability(url);
-
     const savedSearch = formatSearchParams(url);
 
-    const originResp = await fetchFromOrigin(request, cacheable, savedSearch);
+    const { handler, cache } = ROUTES.find((route) => route.match(url.pathname));
 
-    const scheduleResp = await getSchedule(url.pathname, originResp);
-    if (scheduleResp) return scheduleResp;
-
-    return originResp;
+    return handler({ url, env, request, cache, savedSearch });
   },
 };

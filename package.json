@@ -24,12 +24,11 @@
   },
   "homepage": "https://github.com/aemsites/author-kit#readme",
   "devDependencies": {
+    "@adobe/eslint-config-helix": "^3.0.17",
     "@esm-bundle/chai": "4.3.4-fix.0",
-    "@stylistic/eslint-plugin": "^5.7.1",
     "@web/dev-server-import-maps": "^0.2.0",
     "@web/test-runner": "^0.18.0",
     "@web/test-runner-commands": "0.9.0",
-    "airbnb-eslint9": "^1.0.3",
     "chai": "4.4.1",
     "eslint": "^9.39.2",
     "eslint-plugin-chai-friendly": "^1.1.0",

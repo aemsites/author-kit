@@ -30,6 +30,16 @@
     color: var(--color-light);
   }
 
+  &.quiet-background {
+    .hero-background div::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      backdrop-filter: blur(200px);
+      mask-image: linear-gradient(to right bottom, rgb(0 0 0 / 80%) 40%, rgb(0 0 0 / 20%) 125%);
+    }
+  }
+
   &.hero-text-start {
     img {
       object-position: 10% 50%;
@@ -56,6 +66,8 @@
     }
 
     > div {
+      /* Used for quiet-background */
+      background-color: var(--color-background);
       position: absolute;
       inset: 0;
     }
@@ -187,6 +199,12 @@
         }
       }
     }
+  }
+}
+
+@container (width < 400px) {
+  .layout-bento .hero .hero-foreground {
+    grid-template-columns: 1fr;
   }
 }
 

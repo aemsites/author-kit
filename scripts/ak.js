@@ -1,3 +1,15 @@
+/*
+ * Copyright 2026 Adobe. All rights reserved.
+ * This file is licensed to you under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy
+ * of the License at http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under
+ * the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+ * OF ANY KIND, either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
+ */
+
 const LOG = async (ex, el) => (await import('./utils/error.js')).default(ex, el);
 
 export function getMetadata(name) {
@@ -66,8 +78,9 @@ export async function loadBlock(block) {
 }
 
 function loadTemplate() {
-  const template = getMetadata('template');
-  if (!template) return;
+  const meta = getMetadata('template');
+  if (!meta) return;
+  const template = meta.replaceAll(' ', '-').toLowerCase();
   const { codeBase } = getConfig();
   document.body.classList.add('has-template');
   loadStyle(`${codeBase}/templates/${template}/${template}.css`).then(() => {
@@ -173,9 +186,8 @@ export function decorateLink(config, a) {
     if (hostMatch) a.href = a.href.replace(url.origin, '');
 
     const isRelative = a.getAttribute('href').startsWith('/');
-
     const { dnt, dnb } = decorateHash(a, url);
-    if (isRelative || !dnt) {
+    if (isRelative && !dnt) {
       const localized = localizeUrl({ config, url });
       if (localized) a.href = localized.href;
     }
@@ -191,8 +203,7 @@ export function decorateLink(config, a) {
       if (found) return a;
     }
   } catch (ex) {
-    config.log('Could not decorate link');
-    config.log(ex);
+    config.log('Could not decorate link', ex);
   }
   return null;
 }
@@ -217,7 +228,6 @@ function groupChildren(section) {
   const children = section.querySelectorAll(':scope > *');
   const groups = [];
   let currentGroup = null;
-
   for (const child of children) {
     const isDiv = child.tagName === 'DIV';
     const currentType = currentGroup?.classList.contains('block-content');
@@ -231,7 +241,6 @@ function groupChildren(section) {
 
     currentGroup.append(child);
   }
-
   return groups;
 }
 
