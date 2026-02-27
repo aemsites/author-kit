@@ -75,11 +75,28 @@ function getReplaceEl(a) {
   return current;
 }
 
-export default async function init(a) {
+function getRequestPath(a) {
   const { hostname, pathname } = a;
-  // Make URL relative for services that don't respect `.aem.` conventions.
-  const makeRelative = ['.da.', '.aem.', 'local'].some((host) => hostname.includes(host));
-  const path = makeRelative ? pathname : a.href;
+  const href = a.getAttribute('href');
+  // If its already relative, return the pathname
+  if (href.startsWith('/')) return pathname;
+  // If the hostname matches, return the pathname
+  if (hostname === window.location.hostname) return pathname;
+  // If the aem project matches, make it relative (useful across delivery tiers)
+  const isAem = ['.da.', '.aem.', 'local'].some((host) => hostname.includes(host));
+  if (isAem) {
+    // If org and site matches, return the pathname
+    const [aemOrg, aemSite] = hostname.split('.')[0].split('--').reverse();
+    const [winOrg, winSite] = window.location.hostname.split('.')[0].split('--').reverse();
+    if ((aemOrg === winOrg) && (aemSite === winSite)) return pathname;
+  }
+  // Give up and return the full href
+  return a.href;
+}
+
+export default async function init(a) {
+  const path = getRequestPath(a);
+
   const fragment = await loadFragment(path);
   if (fragment) {
     const elToReplace = getReplaceEl(a);
@@ -89,7 +106,7 @@ export default async function init(a) {
       : [fragment];
     for (const [idx, child] of children.entries()) {
       // If relative, create a unique ID to help fragments be identified after being inserted into the page
-      if (makeRelative) child.id = btoa(encodeURIComponent(`${path}/${idx + 1}`));
+      if (path.startsWith('/')) child.id = btoa(encodeURIComponent(`${path}/${idx + 1}`));
       elToReplace.insertAdjacentElement('afterend', child);
     }
     elToReplace.remove();
