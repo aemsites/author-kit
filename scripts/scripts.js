@@ -1,4 +1,4 @@
-import { loadArea, setConfig } from './ak.js';
+import { loadArea, setConfig, getMetadata } from './ak.js';
 
 const hostnames = ['authorkit.dev'];
 
@@ -33,10 +33,17 @@ const decorateArea = ({ area = document }) => {
   eagerLoad(area, 'img');
 };
 
+async function loadTarget() {
+  const targetMeta = getMetadata('target');
+  if (!targetMeta) return;
+  await import('./tools/target/target.js');
+}
+
 export async function loadPage() {
   setConfig({ hostnames, locales, linkBlocks, components, decorateArea });
   await loadArea();
 }
+await loadTarget();
 await loadPage();
 
 (function da() {
