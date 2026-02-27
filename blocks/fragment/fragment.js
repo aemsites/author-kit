@@ -87,7 +87,9 @@ export default async function init(a) {
     const children = sections.length === 1
       ? fragment.querySelectorAll(':scope > *')
       : [fragment];
-    for (const child of children) {
+    for (const [idx, child] of children.entries()) {
+      // If relative, create a unique ID to help fragments be identified after being inserted into the page
+      if (makeRelative) child.id = btoa(encodeURIComponent(`${path}/${idx + 1}`));
       elToReplace.insertAdjacentElement('afterend', child);
     }
     elToReplace.remove();
