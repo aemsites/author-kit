@@ -36,7 +36,7 @@ const decorateArea = ({ area = document }) => {
 async function loadTarget() {
   const targetMeta = getMetadata('target');
   if (!targetMeta) return;
-  await import('./tools/target/target.js');
+  await import('../tools/target/target.js');
 }
 
 export async function loadPage() {
