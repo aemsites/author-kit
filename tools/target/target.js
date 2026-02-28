@@ -1,7 +1,7 @@
 import { getConfig } from '../../scripts/ak.js';
 import loadScript from '../../scripts/utils/script.js';
 
-const { codeBase } = getConfig();
+const { codeBase, hostnames } = getConfig();
 
 const LOAD_EVENT = 'at-content-rendering-succeeded';
 const NO_OFFERS_EVENT = 'at-content-rendering-no-offers';
@@ -10,6 +10,10 @@ const FAILED_EVENT = 'at-request-failed';
 const targetFinished = () => {
   const params = new URLSearchParams(window.location.search);
   if (params.has('mboxDisable')) return null;
+
+  window.targetGlobalSettings = {
+    serverDomain: hostnames[0],
+  };
 
   loadScript(`${codeBase}/deps/at/at.js`);
 
