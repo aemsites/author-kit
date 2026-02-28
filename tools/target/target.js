@@ -11,10 +11,8 @@ await (async function target() {
     console.log('Target decision complete');
   });
 
-  document.addEventListener('at-library-loaded', function () {
-    document.addEventListener('at-content-rendering-succeeded', function (e) {
-      console.log('Target finished rendering: ', e.detail);
-    });
+  document.addEventListener('at-content-rendering-succeeded', function (e) {
+    console.log('Target finished rendering: ', e.detail);
   });
 }());
 
