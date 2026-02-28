@@ -5,8 +5,14 @@ const { codeBase } = getConfig();
 
 const LOAD_EVENT = 'at-content-rendering-succeeded';
 
-const targetFinished = (() => {
+const targetFinished = () => {
   loadScript(`${codeBase}/deps/at/at.js`);
+
+  document.addEventListener('at-request-succeeded', (e) => {
+    const { response } = e.detail;
+    const hasActivities = response?.execute?.pageLoad?.options?.length > 0;
+    console.log(hasActivities);
+  });
 
   return new Promise((resolve) => {
     document.addEventListener(LOAD_EVENT, () => {
@@ -17,6 +23,6 @@ const targetFinished = (() => {
       resolve();
     });
   })
-})();
+};
 
 export default targetFinished;
