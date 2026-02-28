@@ -4,6 +4,7 @@ import loadScript from '../../scripts/utils/script.js';
 const { codeBase } = getConfig();
 
 const LOAD_EVENT = 'at-content-rendering-succeeded';
+const NO_CON_EVENT = 'at-content-rendering-no-content';
 
 const targetFinished = () => {
   const params = new URLSearchParams(window.location.search);
@@ -12,11 +13,8 @@ const targetFinished = () => {
   loadScript(`${codeBase}/deps/at/at.js`);
 
   return new Promise((resolve) => {
-    document.addEventListener('at-request-succeeded', (e) => {
-      const { response } = e.detail;
-      console.log(response);
-      // const hasActivities = response?.execute?.pageLoad?.options?.length > 0;
-      // if (!hasActivities) resolve();
+    document.addEventListener(NO_CON_EVENT, () => {
+      resolve();
     });
 
     document.addEventListener(LOAD_EVENT, () => {
