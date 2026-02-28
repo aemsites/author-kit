@@ -33,13 +33,14 @@ const decorateArea = ({ area = document }) => {
   eagerLoad(area, 'img');
 };
 
+setConfig({ hostnames, locales, linkBlocks, components, decorateArea });
+
 async function loadTarget() {
   const targetMeta = getMetadata('target');
   if (targetMeta) await (await import('../tools/target/target.js')).default();
 }
 
 export async function loadPage() {
-  setConfig({ hostnames, locales, linkBlocks, components, decorateArea });
   await loadArea();
 }
 await loadTarget();
