@@ -10,13 +10,13 @@ const targetFinished = () => {
 
   return new Promise((resolve) => {
     document.addEventListener(LOAD_EVENT, () => {
-      // const markers = document.querySelectorAll('.at-element-marker');
-      // for (const marker of markers) {
-      //   marker.after(...marker.children);
-      // }
+      const markers = document.querySelectorAll('.at-element-marker');
+      for (const marker of markers) {
+        marker.replaceWith(...marker.childNodes);
+      }
       resolve();
     });
-  })
+  });
 };
 
 export default targetFinished;
