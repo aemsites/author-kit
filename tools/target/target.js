@@ -3,22 +3,20 @@ import loadScript from '../../scripts/utils/script.js';
 
 const { codeBase } = getConfig();
 
-await (async function target() {
-  window.targetGlobalSettings = {
-    bodyHidingEnabled: false,
-    autoCreate: false
-  };
+const LOAD_EVENT = 'at-content-rendering-succeeded';
 
-  await loadScript(`${codeBase}/deps/at/at.js`);
+const targetFinished = (() => {
+  loadScript(`${codeBase}/deps/at/at.js`);
 
-  document.addEventListener('at-request-succeeded', (e) => {
-    console.log(e);
-    console.log('Target decision complete');
-  });
+  return new Promise((resolve) => {
+    document.addEventListener(LOAD_EVENT, () => {
+      const markers = document.querySelectorAll('.at-element-marker');
+      for (const marker of markers) {
+        marker.replaceWith(...marker.childNodes);
+      }
+      resolve();
+    });
+  })
+})();
 
-  document.addEventListener('at-content-rendering-succeeded', function (e) {
-    console.log('Target finished rendering: ', e.detail);
-  });
-}());
-
-
+export default targetFinished;
