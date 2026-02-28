@@ -11,16 +11,6 @@ await (async function target() {
 
   await loadScript(`${codeBase}/deps/at/at.js`);
 
-  const response = await adobe.target.getOffers({
-    request: {
-      execute: {
-        mboxes: [{ index: 0, name: 'target-global-mbox' }]
-      }
-    }
-  });
-
-  console.log(response);
-
   document.addEventListener('at-request-succeeded', (e) => {
     console.log(e);
     console.log('Target decision complete');
