@@ -6,15 +6,18 @@ const { codeBase } = getConfig();
 const LOAD_EVENT = 'at-content-rendering-succeeded';
 
 const targetFinished = () => {
+  const params = new URLSearchParams(window.location.search);
+  if (params.has('mboxDisable')) return null;
+
   loadScript(`${codeBase}/deps/at/at.js`);
 
   return new Promise((resolve) => {
     document.addEventListener('at-request-succeeded', (e) => {
       const { response } = e.detail;
-      const hasActivities = response?.execute?.pageLoad?.options?.length > 0;
-      if (!hasActivities) resolve();
+      console.log(response);
+      // const hasActivities = response?.execute?.pageLoad?.options?.length > 0;
+      // if (!hasActivities) resolve();
     });
-
 
     document.addEventListener(LOAD_EVENT, () => {
       const markers = document.querySelectorAll('.at-element-marker');
