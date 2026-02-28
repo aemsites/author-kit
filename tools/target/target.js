@@ -4,7 +4,8 @@ import loadScript from '../../scripts/utils/script.js';
 const { codeBase } = getConfig();
 
 const LOAD_EVENT = 'at-content-rendering-succeeded';
-const NO_CON_EVENT = 'at-content-rendering-no-content';
+const NO_OFFERS_EVENT = 'at-content-rendering-no-offers';
+const FAILED_EVENT = 'at-request-failed';
 
 const targetFinished = () => {
   const params = new URLSearchParams(window.location.search);
@@ -13,9 +14,7 @@ const targetFinished = () => {
   loadScript(`${codeBase}/deps/at/at.js`);
 
   return new Promise((resolve) => {
-    document.addEventListener(NO_CON_EVENT, () => {
-      resolve();
-    });
+    document.addEventListener(NO_OFFERS_EVENT, resolve);
 
     document.addEventListener(LOAD_EVENT, () => {
       const markers = document.querySelectorAll('.at-element-marker');
@@ -24,6 +23,10 @@ const targetFinished = () => {
       }
       resolve();
     });
+
+    document.addEventListener(FAILED_EVENT, resolve);
+
+    setTimeout(() => { resolve(); }, 3000);
   });
 };
 
