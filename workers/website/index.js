@@ -12,14 +12,8 @@
 
 import { fetchSchedule, fetchFromAem } from './handlers/aem.js';
 import fetchDaSc from './handlers/dasc.js';
-import fetchTarget from './handlers/target.js';
 
 const ROUTES = [
-  // Handle Target
-  {
-    match: (path) => path.startsWith('/rest/v1/delivery'),
-    handler: fetchTarget,
-  },
   // Handle schedule manifests
   {
     match: (path) => path.includes('/schedules/') && path.endsWith('json'),
@@ -32,7 +26,7 @@ const ROUTES = [
   },
   // Handle drafts
   {
-    match: (path) => path.startsWith('/drafts'),
+    match: (path) => path.includes('/drafts/'),
     handler: () => new Response('Not found - drafts are denied on production.', { status: 404 }),
   },
   // Default AEM handler should be last
@@ -98,9 +92,9 @@ const formatRequest = (env, request, url) => {
 
   // Map to a branch if on sub-domain
   const splitHost = aemUrl.hostname.split('.');
-  const branch = splitHost > 2 ? splitHost[0] : 'main';
-
+  const branch = splitHost.length > 2 ? splitHost[0] : 'main';
   aemUrl.hostname = `${branch}--${env.AEM_SITE}--${env.AEM_ORG}.aem.live`;
+
   aemUrl.port = '';
   aemUrl.protocol = 'https:';
   const req = new Request(aemUrl, request);
