@@ -15,6 +15,7 @@ const targetFinished = () => {
       if (!hasActivities) resolve();
     });
 
+
     document.addEventListener(LOAD_EVENT, () => {
       const markers = document.querySelectorAll('.at-element-marker');
       for (const marker of markers) {
