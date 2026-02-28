@@ -1,4 +1,4 @@
-name = "ak-website-target"
+name = "ak-website-branch"
 main = "index.js"
 compatibility_date = "2025-02-14"
 keep_vars = true

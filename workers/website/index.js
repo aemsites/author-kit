@@ -95,13 +95,19 @@ const formatSearchParams = (url) => {
 
 const formatRequest = (env, request, url) => {
   const aemUrl = new URL(url.href);
-  aemUrl.hostname = `main--${env.AEM_SITE}--${env.AEM_ORG}.aem.live`;
+
+  // Map to a branch if on sub-domain
+  const splitHost = aemUrl.hostname.split('.');
+  const branch = splitHost > 2 ? splitHost[0] : 'main';
+
+  aemUrl.hostname = `${branch}--${env.AEM_SITE}--${env.AEM_ORG}.aem.live`;
   aemUrl.port = '';
   aemUrl.protocol = 'https:';
   const req = new Request(aemUrl, request);
   req.headers.set('x-forwarded-host', req.headers.get('host'));
   req.headers.set('x-byo-cdn-type', 'cloudflare');
-  if (env.PUSH_INVALIDATION !== 'disabled') {
+  // Only main branch allows push invalidation - 02/27/26
+  if (env.PUSH_INVALIDATION !== 'disabled' && branch === 'main') {
     req.headers.set('x-push-invalidation', 'enabled');
   }
   if (env.ORIGIN_AUTHENTICATION) {
