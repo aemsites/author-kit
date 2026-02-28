@@ -12,7 +12,7 @@ const targetFinished = () => {
   if (params.has('mboxDisable')) return null;
 
   window.targetGlobalSettings = {
-    serverDomain: hostnames[0],
+    serverDomain: 'ak-website-target.chris-millar.workers.dev',
   };
 
   loadScript(`${codeBase}/deps/at/at.js`);

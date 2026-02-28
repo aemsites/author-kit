@@ -1,9 +1,9 @@
-name = "ak-website"
+name = "ak-website-target"
 main = "index.js"
 compatibility_date = "2025-02-14"
 keep_vars = true
 
-vars = { AEM_ORG = "aemsites", AEM_SITE = "author-kit" }
+vars = { AEM_ORG = "aemsites", AEM_SITE = "author-kit", TARGET_HOSTNAME = "adobe.tt.omtrdc.net" }
 
 [env.dev]
-vars = { AEM_ORG = "aemsites", AEM_SITE = "author-kit" }
+vars = { AEM_ORG = "aemsites", AEM_SITE = "author-kit", TARGET_HOSTNAME = "adobe.tt.omtrdc.net" }

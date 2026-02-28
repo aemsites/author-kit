@@ -12,8 +12,14 @@
 
 import { fetchSchedule, fetchFromAem } from './handlers/aem.js';
 import fetchDaSc from './handlers/dasc.js';
+import fetchTarget from './handlers/target.js';
 
 const ROUTES = [
+  // Handle Target
+  {
+    match: (path) => path.startsWith('/rest/v1/delivery'),
+    handler: fetchTarget,
+  },
   // Handle schedule manifests
   {
     match: (path) => path.includes('/schedules/') && path.endsWith('json'),
