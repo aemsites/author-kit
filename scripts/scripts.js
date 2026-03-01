@@ -27,7 +27,6 @@ const decorateArea = ({ area = document }) => {
     const img = parent.querySelector(selector);
     if (!img) return;
     img.removeAttribute('loading');
-    img.fetchPriority = 'high';
   };
 
   eagerLoad(area, 'img');
@@ -44,9 +43,9 @@ async function loadTarget() {
 }
 
 export async function loadPage() {
+  await loadTarget();
   await loadArea();
 }
-await loadTarget();
 await loadPage();
 
 (function da() {
