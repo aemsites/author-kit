@@ -37,7 +37,10 @@ setConfig({ hostnames, locales, linkBlocks, components, decorateArea });
 
 async function loadTarget() {
   const targetMeta = getMetadata('target');
-  if (targetMeta) await (await import('../tools/target/target.js')).default();
+  if (targetMeta) {
+    await import('../deps/at/at.js');
+    await (await import('../tools/target/target.js')).default();
+  }
 }
 
 export async function loadPage() {
