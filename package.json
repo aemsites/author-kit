@@ -39,6 +39,7 @@
     "stylelint-config-standard": "^40.0.0"
   },
   "dependencies": {
+    "@adobe/alloy": "^2.31.1",
     "esbuild": "^0.25.10",
     "lit": "^3.3.1"
   }
