@@ -16,55 +16,54 @@ function convertTargetSelector(selector) {
   });
 }
 
-const targetFinished = () => {
+const targetFinished = async () => {
   // Truly disable with Target's own convention
   const params = new URLSearchParams(window.location.search);
   if (params.has('mboxDisable')) return null;
 
   // Asyncronously load the script
-  loadScript(`${codeBase}/deps/at/at.js`);
+  await loadScript(`${codeBase}/deps/at/at.js`);
+  const offers = await window.adobe.target.getOffers({
+    request: { execute: { pageLoad: {} } },
+  });
+
+  offers.execute.pageLoad.options.forEach((opt) => {
+    const { cssSelector, content } = opt.content[0];
+
+    const selector = convertTargetSelector(cssSelector);
+    const el = document.querySelector(selector);
+
+    el.outerHTML = content;
+  });
 
   // Only resolve when one of the following happens
-  return new Promise((resolve) => {
-    // If there are no offers
-    // document.addEventListener(NO_OFFERS_EVENT, resolve);
+  // return new Promise((resolve) => {
+  //   // If there are no offers
+  //   // document.addEventListener(NO_OFFERS_EVENT, resolve);
 
-    document.addEventListener('at-request-succeeded', async (e) => {
-      const offers = await window.adobe.target.getOffers({
-        request: {
-          execute: {
-            pageLoad: {},
-          },
-        },
-      });
+  //   document.addEventListener('at-request-succeeded', async (e) => {
 
-      offers.execute.pageLoad.options.forEach((opt) => {
-        const { cssSelector, content } = opt.content[0];
 
-        const selector = convertTargetSelector(cssSelector);
-        const el = document.querySelector(selector);
 
-        el.outerHTML = content;
-      });
 
-      resolve();
-    }, { once: true });
+  //     resolve();
+  //   }, { once: true });
 
-    // If the DOM has been updated
-    // document.addEventListener(LOAD_EVENT, () => {
-    //   const markers = document.querySelectorAll('.at-element-marker');
-    //   for (const marker of markers) {
-    //     marker.replaceWith(...marker.childNodes);
-    //   }
-    //   resolve();
-    // });
+  //   // If the DOM has been updated
+  //   // document.addEventListener(LOAD_EVENT, () => {
+  //   //   const markers = document.querySelectorAll('.at-element-marker');
+  //   //   for (const marker of markers) {
+  //   //     marker.replaceWith(...marker.childNodes);
+  //   //   }
+  //   //   resolve();
+  //   // });
 
-    // // If the update failed
-    // document.addEventListener(FAILED_EVENT, resolve);
+  //   // // If the update failed
+  //   // document.addEventListener(FAILED_EVENT, resolve);
 
-    // // If it takes longer than 5 seconds
-    // setTimeout(() => { resolve(); }, TIMEOUT);
-  });
+  //   // // If it takes longer than 5 seconds
+  //   // setTimeout(() => { resolve(); }, TIMEOUT);
+  // });
 };
 
 export default targetFinished;
