@@ -194,6 +194,11 @@ body {
   font-size: var(--body-font-size-m);
   line-height: var(--body-line-height);
   padding: var(--header-height) 0 0;
+  content-visibility: hidden;
+
+  &.decorated {
+    content-visibility: unset;
+  }
 
   &.has-breadcrumb {
     margin: calc(var(--header-height) + var(--breadcrumb-height)) 0 0;
@@ -280,7 +285,7 @@ a {
 
 /* sections */
 .section {
-  content-visibility: unset;
+  display: unset;
 
   > .default-content {
     max-width: var(--grid-container-width);
@@ -362,7 +367,7 @@ svg {
 main > div,
 .has-template,
 div[data-status] {
-  content-visibility: hidden;
+  display: none;
 }
 
 aem-sidekick {
