@@ -279,6 +279,12 @@ function decorateDoc() {
   decorateHeader();
   loadTemplate();
 
+  const fonts = sessionStorage.getItem('fonts-loaded');
+  if (!fonts) {
+    document.body.classList.add('fonts-optional');
+    sessionStorage.setItem('fonts-loaded', 'on');
+  }
+
   const scheme = localStorage.getItem('color-scheme');
   if (scheme) document.body.classList.add(scheme);
 
