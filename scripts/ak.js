@@ -281,7 +281,7 @@ function decorateDoc() {
 
   const fonts = sessionStorage.getItem('fonts-loaded');
   if (!fonts) {
-    document.body.classList.add('fonts-optional');
+    document.documentElement.classList.add('fonts-optional');
     sessionStorage.setItem('fonts-loaded', 'on');
   }
 

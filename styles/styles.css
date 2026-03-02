@@ -183,14 +183,18 @@
 }
 
 html {
+  font-family: var(--font-family-swap);
   scroll-padding-top: calc(var(--header-height) + 1rem);
+
+  &.fonts-optional {
+    font-family: var(--font-family-optional);
+  }
 }
 
 body {
   margin: 0;
   background-color: var(--color-background);
   color: var(--color-text);
-  font-family: var(--font-family-swap);
   font-size: var(--body-font-size-m);
   line-height: var(--body-line-height);
   padding: var(--header-height) 0 0;
@@ -208,10 +212,6 @@ body {
     --header-height: 0;
 
     margin: 0;
-  }
-
-  &.fonts-optional {
-    font-family: var(--font-family-optional);
   }
 }
 
@@ -285,7 +285,7 @@ a {
 
 /* sections */
 .section {
-  display: unset;
+  display: block;
 
   > .default-content {
     max-width: var(--grid-container-width);
