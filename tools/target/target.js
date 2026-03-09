@@ -5,12 +5,10 @@ const loadTargetOffers = async () => {
   });
 
   // Loop through them and inject
-  offers.execute.pageLoad.options.forEach((opt) => {
+  offers?.execute?.pageLoad?.options?.forEach((opt) => {
     const { cssSelector, content } = opt.content[0];
-
     const el = document.querySelector(cssSelector);
-
-    el.outerHTML = content;
+    if (el) el.outerHTML = content;
   });
 };
 
