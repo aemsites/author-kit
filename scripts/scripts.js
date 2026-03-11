@@ -40,6 +40,7 @@ async function loadTarget() {
     window.targetGlobalSettings = {
       serverDomain: hostnames[0],
       secureOnly: true,
+      overrideMboxEdgeServer: false,
     };
 
     await import('../deps/at/at.js');
