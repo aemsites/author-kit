@@ -38,7 +38,16 @@ async function loadTarget() {
   const targetMeta = getMetadata('target');
   if (targetMeta) {
     await import('../deps/at/at.js');
-    await (await import('../tools/target/target.js')).default();
+    const offers = await window.adobe.target.getOffers({
+      request: { execute: { pageLoad: {} } },
+    });
+
+    // Loop through them and inject
+    offers?.execute?.pageLoad?.options?.forEach((opt) => {
+      const { cssSelector, content } = opt.content[0];
+      const el = document.querySelector(cssSelector);
+      if (el) el.outerHTML = content;
+    });
   }
 }
 
