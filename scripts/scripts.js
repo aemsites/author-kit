@@ -1,6 +1,6 @@
 import { loadArea, setConfig, getMetadata } from './ak.js';
 
-const hostnames = ['authorkit.dev'];
+const hostnames = ['target.authorkit.dev'];
 
 const locales = {
   '': { lang: 'en' },
@@ -37,6 +37,11 @@ setConfig({ hostnames, locales, linkBlocks, components, decorateArea });
 async function loadTarget() {
   const targetMeta = getMetadata('target');
   if (targetMeta) {
+    window.targetGlobalSettings = {
+      serverDomain: hostnames[0],
+      secureOnly: true,
+    };
+
     await import('../deps/at/at.js');
     const offers = await window.adobe.target.getOffers({
       request: { execute: { pageLoad: {} } },
