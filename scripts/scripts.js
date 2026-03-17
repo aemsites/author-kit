@@ -19,7 +19,7 @@ const linkBlocks = [
 ];
 
 // Blocks with self-managed styles
-const components = ['fragment', 'schedule'];
+const components = ['fragment', 'schedule', 'lamont'];
 
 // How to decorate an area before loading it
 const decorateArea = ({ area = document }) => {
