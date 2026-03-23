@@ -10,6 +10,6 @@ import { getConfig, getMetadata } from '../ak.js';
                 <link rel="manifest" href="${favBase}.webmanifest">`;
 
   document.head.insertAdjacentHTML('beforeend', tags);
-  const favicon = document.head.querySelector('link[rel="icon"]');
+  const favicon = document.head.querySelector('link[href="data:,"]');
   if (favicon) favicon.href = `${favBase}.ico`;
 }());
