@@ -266,6 +266,7 @@ a {
   &.btn-primary {
     color: var(--color-background);
     background-color: var(--color-text);
+    border: 2px solid var(--color-text);
 
     &.btn-outline {
       color: var(--color-text);

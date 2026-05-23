@@ -34,13 +34,12 @@ export async function loadFragment(path) {
 
   const html = await resp.text();
   const doc = new DOMParser().parseFromString(html, 'text/html');
+  replaceDotMedia(path, doc);
 
   const sections = doc.body.querySelectorAll('main > div');
   const fragment = document.createElement('div');
   fragment.classList.add('fragment-content');
   fragment.append(...sections);
-
-  replaceDotMedia(path, doc);
 
   const container = applyPageStyles(fragment);
 
@@ -105,7 +104,8 @@ export default async function init(a) {
       ? fragment.querySelectorAll(':scope > *')
       : [fragment];
     for (const [idx, child] of children.entries()) {
-      // If relative, create a unique ID to help fragments be identified after being inserted into the page
+      // If relative, create a unique ID to help fragments
+      // be identified after being inserted into the page
       if (path.startsWith('/')) child.id = btoa(encodeURIComponent(`${path}/${idx + 1}`));
       elToReplace.insertAdjacentElement('afterend', child);
     }
