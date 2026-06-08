@@ -368,6 +368,7 @@ export async function loadArea({ area } = { area: document }) {
     if (isDoc && idx === 0) {
       if (!isSession) decorateSession();
       import('./postlcp.js').then((mod) => mod.default());
+      import('../deps/rum.js');
     }
   }
   if (isDoc) import('./lazy.js');
