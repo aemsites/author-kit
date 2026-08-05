@@ -215,7 +215,7 @@ export function decorateLink(config, a) {
       if (found) return a;
     }
   } catch (ex) {
-    config.log('Could not decorate link', ex);
+    config.log(ex);
   }
   return null;
 }
