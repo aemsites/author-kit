@@ -5,11 +5,6 @@ import { setColorScheme } from '../section-metadata/section-metadata.js';
 const { locale } = getConfig();
 
 const HEADER_PATH = '/fragments/nav/header';
-const HEADER_ACTIONS = [
-  '/tools/widgets/scheme',
-  '/tools/widgets/language',
-  '/tools/widgets/toggle',
-];
 
 function closeAllMenus() {
   const openMenus = document.body.querySelectorAll('header .is-open');
@@ -86,8 +81,14 @@ function decorateNavToggle(btn) {
   });
 }
 
-async function decorateAction(header, pattern) {
-  const link = header.querySelector(`[href*="${pattern}"]`);
+const HEADER_ACTIONS = [
+  { name: 'scheme', path: '/tools/widgets/scheme', decorate: decorateScheme },
+  { name: 'language', path: '/tools/widgets/language', decorate: decorateLanguage },
+  { name: 'nav-toggle', path: '/tools/widgets/toggle', decorate: decorateNavToggle },
+];
+
+async function decorateAction(header, { name, path, decorate }) {
+  const link = header.querySelector(`[href*="${path}"]`);
   if (!link) return;
 
   const icon = link.querySelector('.icon');
@@ -101,14 +102,11 @@ async function decorateAction(header, pattern) {
     btn.append(textSpan);
   }
   const wrapper = document.createElement('div');
-  wrapper.className = 'action-wrapper';
-  if (icon) wrapper.classList.add(icon.classList[1].replace('icon-', ''));
+  wrapper.className = `action-wrapper ${name}`;
   wrapper.append(btn);
   link.parentElement.parentElement.replaceChild(wrapper, link.parentElement);
 
-  if (pattern === '/tools/widgets/language') decorateLanguage(btn);
-  if (pattern === '/tools/widgets/scheme') decorateScheme(btn);
-  if (pattern === '/tools/widgets/toggle') decorateNavToggle(btn);
+  decorate(btn);
 }
 
 function decorateMenu(li) {
@@ -180,8 +178,8 @@ async function decorateHeader(fragment) {
   if (sections[1]) decorateNavSection(sections[1]);
   if (sections[2]) decorateActionSection(sections[2]);
 
-  for (const pattern of HEADER_ACTIONS) {
-    decorateAction(fragment, pattern);
+  for (const action of HEADER_ACTIONS) {
+    decorateAction(fragment, action);
   }
 }
 

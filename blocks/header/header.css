@@ -307,7 +307,7 @@ header {
         margin: 0;
       }
 
-      .action-wrapper.more {
+      .action-wrapper.nav-toggle {
         display: none;
       }
     }
