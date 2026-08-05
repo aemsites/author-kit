@@ -286,6 +286,10 @@ header {
       }
     }
 
+    .menu {
+      left: calc(0px - var(--spacing-l));
+    }
+
     .mega-menu {
       > .fragment-content {
         display: grid;
