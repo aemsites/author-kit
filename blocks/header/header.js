@@ -87,7 +87,7 @@ const HEADER_ACTIONS = [
   { name: 'nav-toggle', path: '/tools/widgets/toggle', decorate: decorateNavToggle },
 ];
 
-async function decorateAction(header, { name, path, decorate }) {
+function decorateAction(header, { name, path, decorate }) {
   const link = header.querySelector(`[href*="${path}"]`);
   if (!link) return;
 
@@ -168,11 +168,11 @@ function decorateNavSection(section) {
   }
 }
 
-async function decorateActionSection(section) {
+function decorateActionSection(section) {
   section.classList.add('actions-section');
 }
 
-async function decorateHeader(fragment) {
+function decorateHeader(fragment) {
   const sections = fragment.querySelectorAll(':scope > .section');
   if (sections[0]) decorateBrandSection(sections[0]);
   if (sections[1]) decorateNavSection(sections[1]);
@@ -193,7 +193,7 @@ export default async function init(el) {
   try {
     const fragment = await loadFragment(`${locale.prefix}${path}`);
     fragment.classList.add('header-content');
-    await decorateHeader(fragment);
+    decorateHeader(fragment);
     el.append(fragment);
   } catch (e) {
     throw Error(e);

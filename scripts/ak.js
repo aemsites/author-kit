@@ -21,10 +21,13 @@ export function getMetadata(name) {
 export function getLocale(locales = { '': {} }) {
   const { pathname } = window.location;
   const matches = Object.keys(locales).filter((locale) => pathname.startsWith(`${locale}/`));
-  const prefix = getMetadata('locale') || matches.sort((a, b) => b.length - a.length)?.[0] || '';
-  if (locales[prefix].lang) document.documentElement.lang = locales[prefix].lang;
-  if (locales[prefix].dir) document.documentElement.dir = locales[prefix].dir;
-  return { prefix, ...locales[prefix] };
+  const found = getMetadata('locale') || matches.sort((a, b) => b.length - a.length)?.[0] || '';
+  // An unknown prefix falls back to root, otherwise links localize to a locale that isn't there
+  const prefix = found in locales ? found : '';
+  const locale = locales[prefix] || {};
+  if (locale.lang) document.documentElement.lang = locale.lang;
+  if (locale.dir) document.documentElement.dir = locale.dir;
+  return { prefix, ...locale };
 }
 
 export const [setConfig, getConfig] = (() => {
@@ -215,7 +218,7 @@ export function decorateLink(config, a) {
       if (found) return a;
     }
   } catch (ex) {
-    config.log(ex);
+    config.log(ex, a);
   }
   return null;
 }
