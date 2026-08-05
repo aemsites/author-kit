@@ -101,7 +101,8 @@ async function decorateAction(header, pattern) {
     btn.append(textSpan);
   }
   const wrapper = document.createElement('div');
-  wrapper.className = `action-wrapper ${icon.classList[1].replace('icon-', '')}`;
+  wrapper.className = 'action-wrapper';
+  if (icon) wrapper.classList.add(icon.classList[1].replace('icon-', ''));
   wrapper.append(btn);
   link.parentElement.parentElement.replaceChild(wrapper, link.parentElement);
 
@@ -110,9 +111,14 @@ async function decorateAction(header, pattern) {
   if (pattern === '/tools/widgets/toggle') decorateNavToggle(btn);
 }
 
-function decorateMenu() {
-  // TODO: finish single menu support
-  return null;
+function decorateMenu(li) {
+  const list = li.querySelector(':scope > ul');
+  if (!list) return null;
+  const wrapper = document.createElement('div');
+  wrapper.className = 'menu';
+  wrapper.append(list);
+  li.append(wrapper);
+  return wrapper;
 }
 
 function decorateMegaMenu(li) {
@@ -130,7 +136,7 @@ function decorateNavItem(li) {
   const link = li.querySelector(':scope > p > a');
   if (link) link.classList.add('main-nav-link');
   const menu = decorateMegaMenu(li) || decorateMenu(li);
-  if (!(menu || link)) return;
+  if (!menu || !link) return;
   link.addEventListener('click', (e) => {
     e.preventDefault();
     toggleMenu(li);

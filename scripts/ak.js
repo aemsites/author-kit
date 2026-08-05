@@ -23,6 +23,7 @@ export function getLocale(locales = { '': {} }) {
   const matches = Object.keys(locales).filter((locale) => pathname.startsWith(`${locale}/`));
   const prefix = getMetadata('locale') || matches.sort((a, b) => b.length - a.length)?.[0] || '';
   if (locales[prefix].lang) document.documentElement.lang = locales[prefix].lang;
+  if (locales[prefix].dir) document.documentElement.dir = locales[prefix].dir;
   return { prefix, ...locales[prefix] };
 }
 
@@ -101,7 +102,7 @@ function loadTemplate() {
 }
 
 function decoratePictures(el) {
-  const pics = el.querySelectorAll('picture');
+  const pics = el.querySelectorAll('picture:has([loading])');
   for (const pic of pics) {
     const source = pic.querySelector('source');
     const clone = source.cloneNode();
@@ -109,7 +110,7 @@ function decoratePictures(el) {
     const search = new URLSearchParams(params);
     search.set('width', 3000);
     clone.setAttribute('srcset', `${pathname}?${search.toString()}`);
-    clone.setAttribute('media', '(min-width: 1440px)');
+    clone.setAttribute('media', '(min-width: 1400px)');
     pic.prepend(clone);
   }
 }

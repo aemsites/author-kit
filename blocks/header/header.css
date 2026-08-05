@@ -99,6 +99,12 @@ header {
       margin-block: 12px;
     }
 
+    ul:first-child {
+      li:first-child {
+        margin-top: 0;
+      }
+    }
+
     ul:not(:has(+ *)) {
       li:last-child {
         margin-bottom: 0;
@@ -312,12 +318,22 @@ header {
         gap: var(--spacing-l);
       }
 
+      .menu {
+        right: initial;
+        min-width: 220px;
+        padding: var(--spacing-l);
+      }
+
       .main-nav-item {
         border-bottom: initial;
 
         > * {
           max-width: initial;
           margin: initial;
+        }
+
+        &:has(> .menu) {
+          position: relative;
         }
 
         &.is-open {
