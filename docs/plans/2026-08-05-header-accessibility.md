@@ -340,7 +340,7 @@ function decorateNavItem(li) {
 }
 ```
 
-`toggleMenu` runs first so `aria-expanded` reflects the state it actually settled on, including the case where `closeAllMenus` closed a different menu.
+`toggleMenu` runs first so `aria-expanded` reflects the state this button settled on. Note this only corrects the clicked trigger — a menu closed by `closeAllMenus` keeps a stale `aria-expanded="true"` until Task 5 moves the reset into `closeAllMenus` itself.
 
 - [ ] **Step 5: Add the button reset**
 
