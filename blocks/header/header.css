@@ -222,6 +222,16 @@ header {
 
     .main-nav-link {
       display: block;
+      width: 100%;
+      appearance: none;
+      background: none;
+      border: 0;
+      padding: 0;
+      margin: 0;
+      font: inherit;
+      color: var(--color-link);
+      text-align: inherit;
+      cursor: pointer;
       line-height: 64px;
     }
 
@@ -325,6 +335,10 @@ header {
       .main-nav-list {
         display: flex;
         gap: var(--spacing-l);
+      }
+
+      .main-nav-link {
+        width: auto;
       }
 
       .menu {

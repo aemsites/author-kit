@@ -26,3 +26,43 @@ describe('label hiding', () => {
     expect(getComputedStyle(span).clipPath).to.not.equal('none');
   });
 });
+
+const NAV_HTML = `<div class="section">
+  <div class="default-content">
+    <ul>
+      <li><p><a href="/plain">Plain</a></p></li>
+      <li>
+        <p><a href="/products">Products</a></p>
+        <ul><li><a href="/products/a">A</a></li></ul>
+      </li>
+    </ul>
+  </div>
+</div>`;
+
+async function mountNav() {
+  const el = await mountHeader(NAV_HTML);
+  const { decorateNavSection } = await import('../../blocks/header/header.js');
+  decorateNavSection(el.querySelector('.section'));
+  return el;
+}
+
+describe('menu triggers', () => {
+  it('is a button wired to its menu', async () => {
+    const el = await mountNav();
+    const trigger = el.querySelector('button.main-nav-link');
+    expect(trigger.tagName).to.equal('BUTTON');
+    expect(trigger.getAttribute('aria-expanded')).to.equal('false');
+    const menu = el.querySelector('.menu');
+    expect(trigger.getAttribute('aria-controls')).to.equal(menu.id);
+    expect(menu.id).to.not.equal('');
+  });
+
+  it('flips aria-expanded on activation', async () => {
+    const el = await mountNav();
+    const trigger = el.querySelector('button.main-nav-link');
+    trigger.click();
+    expect(trigger.getAttribute('aria-expanded')).to.equal('true');
+    trigger.click();
+    expect(trigger.getAttribute('aria-expanded')).to.equal('false');
+  });
+});

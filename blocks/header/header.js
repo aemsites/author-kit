@@ -129,15 +129,28 @@ function decorateMegaMenu(li) {
   return wrapper;
 }
 
+let menuId = 0;
+
 function decorateNavItem(li) {
   li.classList.add('main-nav-item');
   const link = li.querySelector(':scope > p > a');
   if (link) link.classList.add('main-nav-link');
   const menu = decorateMegaMenu(li) || decorateMenu(li);
   if (!menu || !link) return;
-  link.addEventListener('click', (e) => {
-    e.preventDefault();
+
+  menuId += 1;
+  menu.id = `header-menu-${menuId}`;
+  const btn = document.createElement('button');
+  btn.className = 'main-nav-link';
+  btn.type = 'button';
+  btn.textContent = link.textContent;
+  btn.ariaExpanded = 'false';
+  btn.setAttribute('aria-controls', menu.id);
+  link.replaceWith(btn);
+
+  btn.addEventListener('click', () => {
     toggleMenu(li);
+    btn.ariaExpanded = String(li.classList.contains('is-open'));
   });
 }
 
@@ -151,7 +164,7 @@ function decorateBrandSection(section) {
   brandLink.append(span);
 }
 
-function decorateNavSection(section) {
+export function decorateNavSection(section) {
   section.classList.add('main-nav-section');
   const navContent = section.querySelector('.default-content');
   const navList = section.querySelector('ul');
