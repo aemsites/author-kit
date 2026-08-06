@@ -28,6 +28,11 @@ header {
     text-decoration: none;
   }
 
+  :focus-visible {
+    outline: 2px solid currentcolor;
+    outline-offset: 2px;
+  }
+
   .a11y-clip,
   .text,
   .brand-text {
