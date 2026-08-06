@@ -1,20 +1,33 @@
 import { expect } from '@esm-bundle/chai';
 
+let headerStylesheetLoaded = null;
+const mountedHeaders = [];
+
 // Loads header.css into the page and returns the decorated <header>.
 async function mountHeader(html) {
-  await new Promise((resolve) => {
-    const link = document.createElement('link');
-    link.rel = 'stylesheet';
-    link.href = '/blocks/header/header.css';
-    link.onload = resolve;
-    link.onerror = resolve;
-    document.head.append(link);
-  });
+  if (!headerStylesheetLoaded) {
+    headerStylesheetLoaded = new Promise((resolve) => {
+      const link = document.createElement('link');
+      link.rel = 'stylesheet';
+      link.href = '/blocks/header/header.css';
+      link.onload = resolve;
+      link.onerror = resolve;
+      document.head.append(link);
+    });
+  }
+  await headerStylesheetLoaded;
   const el = document.createElement('header');
   el.innerHTML = html;
   document.body.append(el);
+  mountedHeaders.push(el);
   return el;
 }
+
+afterEach(() => {
+  for (const el of mountedHeaders.splice(0)) {
+    el.remove();
+  }
+});
 
 describe('label hiding', () => {
   it('keeps clipped labels measurable, not zero-sized', async () => {
@@ -34,6 +47,10 @@ const NAV_HTML = `<div class="section">
       <li>
         <p><a href="/products">Products</a></p>
         <ul><li><a href="/products/a">A</a></li></ul>
+      </li>
+      <li>
+        <p><a href="/services">Services</a></p>
+        <ul><li><a href="/services/a">A</a></li></ul>
       </li>
     </ul>
   </div>
@@ -87,5 +104,51 @@ describe('menu triggers', () => {
     const idA = elA.querySelector('.menu').id;
     const idB = elB.querySelector('.menu').id;
     expect(idA).to.not.equal(idB);
+  });
+});
+
+describe('menu dismissal', () => {
+  it('closes on Escape and returns focus to the trigger', async () => {
+    const el = await mountNav();
+    const trigger = el.querySelector('button.main-nav-link');
+    trigger.click();
+    const link = el.querySelector('.menu a');
+    link.focus();
+    link.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+    // Assert via booleans, not raw nodes: a failing chai equal() on a DOM
+    // element serializes the node for the diff, which reliably wedges this
+    // headless Chrome (it never returns from the failed assertion).
+    expect(el.querySelector('.main-nav-item.is-open') === null).to.equal(true);
+    expect(document.activeElement === trigger).to.equal(true);
+    expect(trigger.getAttribute('aria-expanded')).to.equal('false');
+  });
+
+  it('closes when focus leaves the menu', async () => {
+    const el = await mountNav();
+    const trigger = el.querySelector('button.main-nav-link');
+    trigger.click();
+    const outside = document.createElement('button');
+    document.body.append(outside);
+    const link = el.querySelector('.menu a');
+    // Dispatched directly rather than via real focus() calls: cross-element
+    // focus transfer plus a tick yield races with whichever browser window
+    // the OS hands focus to next when the suite runs several test files
+    // concurrently, so it is flaky here. The handler under test only reads
+    // e.relatedTarget, so a synthetic focusout exercises the same code path
+    // deterministically.
+    link.dispatchEvent(new FocusEvent('focusout', { bubbles: true, relatedTarget: outside }));
+    expect(el.querySelector('.main-nav-item.is-open') === null).to.equal(true);
+    outside.remove();
+  });
+
+  it('resets aria-expanded on trigger A when trigger B opens', async () => {
+    const el = await mountNav();
+    const [triggerA, triggerB] = el.querySelectorAll('button.main-nav-link');
+    triggerA.click();
+    expect(triggerA.getAttribute('aria-expanded')).to.equal('true');
+    triggerB.click();
+    expect(triggerA.getAttribute('aria-expanded')).to.equal('false');
+    expect(triggerB.getAttribute('aria-expanded')).to.equal('true');
+    expect(el.querySelectorAll('.main-nav-item.is-open')).to.have.lengthOf(1);
   });
 });

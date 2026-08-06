@@ -10,7 +10,11 @@ function closeAllMenus() {
   const openMenus = document.body.querySelectorAll('header .is-open');
   for (const openMenu of openMenus) {
     openMenu.classList.remove('is-open');
+    const trigger = openMenu.querySelector('[aria-expanded]');
+    if (trigger) trigger.ariaExpanded = 'false';
   }
+  // eslint-disable-next-line no-use-before-define
+  document.removeEventListener('click', docClose);
 }
 
 function docClose(e) {
@@ -18,15 +22,26 @@ function docClose(e) {
   closeAllMenus();
 }
 
+function menuKeydown(e) {
+  if (e.key !== 'Escape') return;
+  const open = e.target.closest('.is-open');
+  if (!open) return;
+  const trigger = open.querySelector('[aria-expanded]');
+  closeAllMenus();
+  trigger?.focus();
+}
+
+function menuFocusout(e) {
+  const open = e.target.closest('.is-open');
+  if (!open) return;
+  if (open.contains(e.relatedTarget)) return;
+  closeAllMenus();
+}
+
 function toggleMenu(menu) {
   const isOpen = menu.classList.contains('is-open');
   closeAllMenus();
-  if (isOpen) {
-    document.removeEventListener('click', docClose);
-    return;
-  }
-
-  // Setup the global close event
+  if (isOpen) return;
   document.addEventListener('click', docClose);
   menu.classList.add('is-open');
 }
@@ -179,6 +194,8 @@ export function decorateNavSection(section) {
   for (const navItem of mainNavItems) {
     decorateNavItem(navItem);
   }
+  nav.addEventListener('keydown', menuKeydown);
+  nav.addEventListener('focusout', menuFocusout);
 }
 
 function decorateActionSection(section) {
