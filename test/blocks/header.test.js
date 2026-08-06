@@ -235,3 +235,62 @@ describe('collapsed mobile nav', () => {
     expect(toggle.ariaExpanded).to.equal('true');
   });
 });
+
+describe('mobile drawer', () => {
+  afterEach(async () => {
+    await setViewport({ width: 1440, height: 900 });
+  });
+
+  it('inerts the page, moves focus in, and restores it on Escape', async () => {
+    await setViewport({ width: 390, height: 844 });
+    const main = document.createElement('main');
+    document.body.append(main);
+    const el = await mountFullHeader();
+    const toggle = el.querySelector('.action-wrapper.nav-toggle button');
+
+    toggle.click();
+    expect(main.inert).to.equal(true);
+    expect(el.contains(document.activeElement)).to.equal(true);
+
+    document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+    expect(el.classList.contains('is-mobile-open')).to.equal(false);
+    expect(main.inert).to.equal(false);
+    // Compared via boolean, not passed to chai's equal(): a failing equal()
+    // on a DOM node serializes it for the diff, which reliably wedges this
+    // headless Chrome (see the same pattern in 'menu dismissal' above).
+    expect(document.activeElement === toggle).to.equal(true);
+    main.remove();
+  });
+
+  it('does not leak the Escape listener when closed by re-clicking the toggle', async () => {
+    await setViewport({ width: 390, height: 844 });
+    const el = await mountFullHeader();
+    const toggle = el.querySelector('.action-wrapper.nav-toggle button');
+
+    // Count net document-level 'keydown' listeners added across repeated
+    // open/close-by-click cycles. closeDrawer() is idempotent, so a leaked
+    // listener does not show up as a wrong end state on its own (all stale
+    // handlers still close the same header correctly) - it only shows up as
+    // registrations that never get balanced by a removal.
+    let net = 0;
+    const { addEventListener, removeEventListener } = document;
+    document.addEventListener = function patchedAdd(type, fn, opts) {
+      if (type === 'keydown') net += 1;
+      return addEventListener.call(this, type, fn, opts);
+    };
+    document.removeEventListener = function patchedRemove(type, fn, opts) {
+      if (type === 'keydown') net -= 1;
+      return removeEventListener.call(this, type, fn, opts);
+    };
+
+    toggle.click();
+    toggle.click();
+    toggle.click();
+    toggle.click();
+
+    document.addEventListener = addEventListener;
+    document.removeEventListener = removeEventListener;
+
+    expect(net).to.equal(0);
+  });
+});
