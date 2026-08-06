@@ -45,7 +45,7 @@ cd "$AK_VISUAL" && node capture.mjs <label>      # 18 shots, 2 legitimate skips
 Set `AK_VISUAL` in every shell that runs a capture step. If `$AK_VISUAL/capture.mjs` is missing,
 recreate it before starting Task 1 — the plan's verification depends on it.
 
-The harness drives system Chrome via `channel: 'chrome'` — the cached Playwright browsers are the wrong build and must not be downloaded. It clips to the runtime union of the header and any visible menu; screenshotting the `header` element silently clips overflowing desktop menus and produces false green diffs.
+The harness hides `main` and `footer` and freezes animations before each shot — the header is the subject, and the hero gradient behind it is animated, which made byte-exact diffing meaningless until this was added. It drives system Chrome via `channel: 'chrome'` — the cached Playwright browsers are the wrong build and must not be downloaded. It clips to the runtime union of the header and any visible menu; screenshotting the `header` element silently clips overflowing desktop menus and produces false green diffs.
 
 ---
 
