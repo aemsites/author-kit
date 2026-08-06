@@ -149,10 +149,13 @@ Expected: FAIL — width is `0`, because the current rule sets `width: 0; height
 
 - [ ] **Step 3: Add the utility and use it**
 
-In `blocks/header/header.css`, inside the `header { … }` block, add:
+In `blocks/header/header.css`, inside the `header { … }` block, add a single rule covering the
+utility class and both existing labels — one selector list, no duplicated declarations:
 
 ```css
-  .a11y-clip {
+  .a11y-clip,
+  .text,
+  .brand-text {
     position: absolute;
     width: 1px;
     height: 1px;
@@ -165,21 +168,10 @@ In `blocks/header/header.css`, inside the `header { … }` block, add:
   }
 ```
 
-Replace the `.text` rule (currently `display: block; width: 0; height: 0; overflow: hidden`) with:
-
-```css
-      .text {
-        position: absolute;
-        width: 1px;
-        height: 1px;
-        margin: -1px;
-        overflow: hidden;
-        white-space: nowrap;
-        clip-path: inset(50%);
-      }
-```
-
-Replace the `.brand-text` rule with the same declarations.
+Then delete the now-dead `.text` rule (nested inside `.action-wrapper button`, currently
+`display: block; width: 0; height: 0; overflow: hidden`) and the `.brand-text` rule (nested inside
+`.brand-section .default-content a`). Both are more deeply nested than the new rule and would win
+on specificity if left in place.
 
 - [ ] **Step 4: Run the test**
 
@@ -337,13 +329,13 @@ function decorateNavItem(li) {
   btn.className = 'main-nav-link';
   btn.type = 'button';
   btn.textContent = link.textContent;
-  btn.setAttribute('aria-expanded', 'false');
+  btn.ariaExpanded = 'false';
   btn.setAttribute('aria-controls', menu.id);
   link.replaceWith(btn);
 
   btn.addEventListener('click', () => {
     toggleMenu(li);
-    btn.setAttribute('aria-expanded', String(li.classList.contains('is-open')));
+    btn.ariaExpanded = String(li.classList.contains('is-open'));
   });
 }
 ```
@@ -450,7 +442,8 @@ function closeAllMenus() {
   const openMenus = document.body.querySelectorAll('header .is-open');
   for (const openMenu of openMenus) {
     openMenu.classList.remove('is-open');
-    openMenu.querySelector('[aria-expanded]')?.setAttribute('aria-expanded', 'false');
+    const trigger = openMenu.querySelector('[aria-expanded]');
+    if (trigger) trigger.ariaExpanded = 'false';
   }
   document.removeEventListener('click', docClose);
 }
@@ -581,7 +574,7 @@ function syncDrawerState(header) {
   for (const section of header.querySelectorAll('.main-nav-section, .actions-section')) {
     section.inert = collapsed && !section.contains(toggle);
   }
-  toggle?.setAttribute('aria-expanded', String(drawerMode && isOpen));
+  if (toggle) toggle.ariaExpanded = String(drawerMode && isOpen);
 }
 ```
 
@@ -676,7 +669,7 @@ function closeDrawer(header, toggle) {
 }
 
 function decorateNavToggle(btn) {
-  btn.setAttribute('aria-expanded', 'false');
+  btn.ariaExpanded = 'false';
   btn.addEventListener('click', () => {
     const header = document.body.querySelector('header');
     if (!header) return;
@@ -888,13 +881,13 @@ Expected: FAIL — `aria-current` is null.
 In `decorateNavSection`, after `nav.append(navList)`:
 
 ```js
-  if (section.dataset.label) nav.setAttribute('aria-label', section.dataset.label);
+  if (section.dataset.label) nav.ariaLabel = section.dataset.label;
 ```
 
 In `decorateNavItem`, after `link.classList.add('main-nav-link')`:
 
 ```js
-  if (link.pathname === window.location.pathname) link.setAttribute('aria-current', 'page');
+  if (link.pathname === window.location.pathname) link.ariaCurrent = 'page';
 ```
 
 Placed before the button conversion, so an item that becomes a trigger does not carry `aria-current` — it no longer points anywhere.
@@ -967,25 +960,25 @@ In `decorateScheme`, before `btn.addEventListener`:
 
 ```js
   const dark = () => document.body.classList.contains('dark-scheme');
-  btn.setAttribute('aria-pressed', String(dark()));
+  btn.ariaPressed = String(dark());
 ```
 
 and as the last statement inside the click handler:
 
 ```js
-    btn.setAttribute('aria-pressed', String(dark()));
+    btn.ariaPressed = String(dark());
 ```
 
 In `decorateLanguage`, before `btn.addEventListener`:
 
 ```js
-  btn.setAttribute('aria-expanded', 'false');
+  btn.ariaExpanded = 'false';
 ```
 
 and as the last statement inside the click handler:
 
 ```js
-    btn.setAttribute('aria-expanded', String(section.classList.contains('is-open')));
+    btn.ariaExpanded = String(section.classList.contains('is-open'));
 ```
 
 - [ ] **Step 5: Run the tests**
@@ -1096,8 +1089,12 @@ Draft it in the scratchpad for the next release, covering the fork-affecting cha
 
 - [ ] **Step 7: Final commit**
 
+Each task already committed its own work, so there is usually nothing left to stage. Commit only if
+Step 4's review turned up a fix:
+
 ```bash
-git add -A && git commit -m "Complete header accessibility work"
+git status --short
+git diff --cached --quiet || git commit -m "Address final visual review findings"
 ```
 
 Only if Steps 1-5 are all clean. Push is a separate, explicit decision.
