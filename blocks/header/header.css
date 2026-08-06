@@ -28,6 +28,20 @@ header {
     text-decoration: none;
   }
 
+  .a11y-clip,
+  .text,
+  .brand-text {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    border: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    clip-path: inset(50%);
+  }
+
   .btn {
     margin-block: 6px;
   }
@@ -58,13 +72,6 @@ header {
       .icon {
         width: 24px;
         height: 24px;
-      }
-
-      .text {
-        display: block;
-        width: 0;
-        height: 0;
-        overflow: hidden;
       }
     }
   }
@@ -151,13 +158,6 @@ header {
         svg {
           width: var(--logo-width);
           height: var(--logo-height);
-        }
-
-        .brand-text {
-          display: block;
-          width: 0;
-          height: 0;
-          overflow: hidden;
         }
       }
     }
