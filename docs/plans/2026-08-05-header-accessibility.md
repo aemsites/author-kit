@@ -39,7 +39,7 @@ outside the repo, at a stable path rather than a session-scoped temp directory:
 ```bash
 export AK_VISUAL=~/.cache/ak-visual              # capture.mjs + playwright, already installed
 aem up --no-open --no-livereload --port 3000     # serves local code, proxies live content
-cd "$AK_VISUAL" && node capture.mjs <label>      # 16 shots, 2 legitimate skips
+cd "$AK_VISUAL" && node capture.mjs <label>      # 18 shots, 2 legitimate skips
 ```
 
 Set `AK_VISUAL` in every shell that runs a capture step. If `$AK_VISUAL/capture.mjs` is missing,
@@ -56,7 +56,7 @@ No code changes. This exists so every later task has something to diff against, 
 **Files:** none in the repo. Artifacts land in `$AK_VISUAL/shots/before/`.
 
 **Interfaces:**
-- Produces: `$AK_VISUAL/shots/before/` containing 16 PNGs, `header.html`, and `report.json`, used by Task 12.
+- Produces: `$AK_VISUAL/shots/before/` containing 18 PNGs, `header.html`, and `report.json`, used by Task 12.
 
 - [ ] **Step 1: Confirm the working tree is clean**
 
@@ -80,7 +80,7 @@ Expected in the log: `Local AEM dev server up and running` and `Enabled reverse 
 curl -s http://127.0.0.1:3000/blocks/header/header.js | grep -c nav-toggle
 ```
 
-Expected: `3`. If `0`, the server is serving the published code rather than the working tree and the baseline is worthless.
+Expected: `1`. If `0`, the server is serving the published code rather than the working tree and the baseline is worthless.
 
 - [ ] **Step 4: Capture**
 
@@ -88,7 +88,7 @@ Expected: `3`. If `0`, the server is serving the published code rather than the 
 cd "$AK_VISUAL" && node capture.mjs before
 ```
 
-Expected: 16 `ok`, and exactly 2 `skip` lines, both `not applicable at this viewport` for `desktop-*-drawer-open`. Any other skip means content changed and the state matrix needs revisiting before proceeding.
+Expected: 18 `ok`, and exactly 2 `skip` lines, both `not applicable at this viewport` for `desktop-*-drawer-open`. Any other skip means content changed and the state matrix needs revisiting before proceeding.
 
 - [ ] **Step 5: Review the shots as a review artifact**
 
