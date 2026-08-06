@@ -26,6 +26,7 @@ function menuKeydown(e) {
   if (e.key !== 'Escape') return;
   const open = e.target.closest('.is-open');
   if (!open) return;
+  e.stopPropagation();
   const trigger = open.querySelector('[aria-expanded]');
   closeAllMenus();
   trigger?.focus();
@@ -92,23 +93,27 @@ function decorateScheme(btn) {
 
 const drawerEscHandlers = new WeakMap();
 
-function closeDrawer(header, toggle) {
+function teardownDrawer(header) {
   header.classList.remove('is-mobile-open');
   for (const el of document.querySelectorAll('main, footer')) el.inert = false;
-  // eslint-disable-next-line no-use-before-define
-  syncDrawerState(header);
   const escHandler = drawerEscHandlers.get(header);
   if (escHandler) {
     document.removeEventListener('keydown', escHandler);
     drawerEscHandlers.delete(header);
   }
+}
+
+function closeDrawer(header, toggle) {
+  teardownDrawer(header);
+  // eslint-disable-next-line no-use-before-define
+  syncDrawerState(header);
   toggle.focus();
 }
 
 function decorateNavToggle(btn) {
   btn.ariaExpanded = 'false';
   btn.addEventListener('click', () => {
-    const header = document.body.querySelector('header');
+    const header = btn.closest('header');
     if (!header) return;
     const opening = !header.classList.contains('is-mobile-open');
     if (!opening) {
@@ -239,6 +244,9 @@ function decorateActionSection(section) {
 function syncDrawerState(header) {
   const toggle = header.querySelector('.action-wrapper.nav-toggle button');
   const drawerMode = !!toggle?.checkVisibility();
+  if (!drawerMode && header.classList.contains('is-mobile-open')) {
+    teardownDrawer(header);
+  }
   const isOpen = header.classList.contains('is-mobile-open');
   const collapsed = drawerMode && !isOpen;
   for (const section of header.querySelectorAll('.main-nav-section, .actions-section')) {

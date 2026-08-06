@@ -244,22 +244,113 @@ describe('mobile drawer', () => {
   it('inerts the page, moves focus in, and restores it on Escape', async () => {
     await setViewport({ width: 390, height: 844 });
     const main = document.createElement('main');
-    document.body.append(main);
+    const footer = document.createElement('footer');
+    document.body.append(main, footer);
     const el = await mountFullHeader();
     const toggle = el.querySelector('.action-wrapper.nav-toggle button');
 
     toggle.click();
     expect(main.inert).to.equal(true);
+    expect(footer.inert).to.equal(true);
     expect(el.contains(document.activeElement)).to.equal(true);
 
     document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
     expect(el.classList.contains('is-mobile-open')).to.equal(false);
     expect(main.inert).to.equal(false);
+    expect(footer.inert).to.equal(false);
     // Compared via boolean, not passed to chai's equal(): a failing equal()
     // on a DOM node serializes it for the diff, which reliably wedges this
     // headless Chrome (see the same pattern in 'menu dismissal' above).
     expect(document.activeElement === toggle).to.equal(true);
     main.remove();
+    footer.remove();
+  });
+
+  it('inerts the page and un-inerts it again when closed by re-clicking the toggle', async () => {
+    await setViewport({ width: 390, height: 844 });
+    const main = document.createElement('main');
+    const footer = document.createElement('footer');
+    document.body.append(main, footer);
+    const el = await mountFullHeader();
+    const toggle = el.querySelector('.action-wrapper.nav-toggle button');
+
+    toggle.click();
+    expect(main.inert).to.equal(true);
+    expect(footer.inert).to.equal(true);
+
+    toggle.click();
+    expect(el.classList.contains('is-mobile-open')).to.equal(false);
+    expect(main.inert).to.equal(false);
+    expect(footer.inert).to.equal(false);
+    main.remove();
+    footer.remove();
+  });
+
+  it('closes the drawer and un-inerts the page when resized past the breakpoint while open', async () => {
+    await setViewport({ width: 390, height: 844 });
+    const main = document.createElement('main');
+    const footer = document.createElement('footer');
+    document.body.append(main, footer);
+    const el = await mountFullHeader();
+    const toggle = el.querySelector('.action-wrapper.nav-toggle button');
+
+    toggle.click();
+    expect(main.inert).to.equal(true);
+    expect(footer.inert).to.equal(true);
+    const focused = document.activeElement;
+
+    await setViewport({ width: 1440, height: 900 });
+    // The teardown runs off a ResizeObserver callback, which the browser
+    // schedules a frame or two after layout settles - poll a few animation
+    // frames rather than asserting immediately.
+    for (let i = 0; i < 10 && el.classList.contains('is-mobile-open'); i += 1) {
+      // eslint-disable-next-line no-await-in-loop
+      await new Promise((resolve) => { requestAnimationFrame(resolve); });
+    }
+
+    expect(el.classList.contains('is-mobile-open')).to.equal(false);
+    expect(main.inert).to.equal(false);
+    expect(footer.inert).to.equal(false);
+    // No user gesture occurred here: an automatic, resize-driven teardown
+    // must not steal focus from wherever it already was.
+    expect(document.activeElement === focused).to.equal(true);
+    main.remove();
+    footer.remove();
+  });
+
+  it('closes only the open submenu on Escape, leaving the drawer open', async () => {
+    await setViewport({ width: 390, height: 844 });
+    const main = document.createElement('main');
+    document.body.append(main);
+    const el = await mountFullHeader();
+    const toggle = el.querySelector('.action-wrapper.nav-toggle button');
+    toggle.click();
+
+    const trigger = el.querySelector('.main-nav-section button.main-nav-link');
+    trigger.click();
+    expect(trigger.getAttribute('aria-expanded')).to.equal('true');
+
+    trigger.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+    expect(trigger.getAttribute('aria-expanded')).to.equal('false');
+    expect(el.classList.contains('is-mobile-open')).to.equal(true);
+    expect(main.inert).to.equal(true);
+
+    document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+    expect(el.classList.contains('is-mobile-open')).to.equal(false);
+    expect(main.inert).to.equal(false);
+    main.remove();
+  });
+
+  it('drives its own header when multiple headers are present', async () => {
+    await setViewport({ width: 390, height: 844 });
+    const elA = await mountFullHeader();
+    const elB = await mountFullHeader();
+    const toggleB = elB.querySelector('.action-wrapper.nav-toggle button');
+
+    toggleB.click();
+    expect(elB.classList.contains('is-mobile-open')).to.equal(true);
+    expect(elA.classList.contains('is-mobile-open')).to.equal(false);
+    toggleB.click();
   });
 
   it('does not leak the Escape listener when closed by re-clicking the toggle', async () => {
