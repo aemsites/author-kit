@@ -34,6 +34,7 @@ function menuKeydown(e) {
 function menuFocusout(e) {
   const open = e.target.closest('.is-open');
   if (!open) return;
+  if (!e.relatedTarget) return;
   if (open.contains(e.relatedTarget)) return;
   closeAllMenus();
 }

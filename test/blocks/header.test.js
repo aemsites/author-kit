@@ -141,6 +141,25 @@ describe('menu dismissal', () => {
     outside.remove();
   });
 
+  it('stays open when focus moves to a link inside the menu', async () => {
+    const el = await mountNav();
+    const trigger = el.querySelector('button.main-nav-link');
+    trigger.click();
+    const menu = el.querySelector('.menu');
+    const link = menu.querySelector('a');
+    link.dispatchEvent(new FocusEvent('focusout', { bubbles: true, relatedTarget: menu }));
+    expect(el.querySelector('.main-nav-item.is-open') === null).to.equal(false);
+  });
+
+  it('stays open when relatedTarget is null (blur to non-focusable content)', async () => {
+    const el = await mountNav();
+    const trigger = el.querySelector('button.main-nav-link');
+    trigger.click();
+    const link = el.querySelector('.menu a');
+    link.dispatchEvent(new FocusEvent('focusout', { bubbles: true, relatedTarget: null }));
+    expect(el.querySelector('.main-nav-item.is-open') === null).to.equal(false);
+  });
+
   it('resets aria-expanded on trigger A when trigger B opens', async () => {
     const el = await mountNav();
     const [triggerA, triggerB] = el.querySelectorAll('button.main-nav-link');
