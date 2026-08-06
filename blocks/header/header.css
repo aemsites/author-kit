@@ -325,10 +325,10 @@ header {
         max-width: initial;
         margin: 0;
       }
+    }
 
-      .action-wrapper.nav-toggle {
-        display: none;
-      }
+    .action-wrapper.nav-toggle {
+      display: none;
     }
 
     .main-nav-section {

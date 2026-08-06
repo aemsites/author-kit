@@ -1,4 +1,5 @@
 import { expect } from '@esm-bundle/chai';
+import { setViewport } from '@web/test-runner-commands';
 
 let headerStylesheetLoaded = null;
 const mountedHeaders = [];
@@ -60,6 +61,19 @@ async function mountNav() {
   const el = await mountHeader(NAV_HTML);
   const { decorateNavSection } = await import('../../blocks/header/header.js');
   decorateNavSection(el.querySelector('.section'));
+  return el;
+}
+
+const FULL_HTML = `<div class="section"><div class="default-content"><p><a href="/">Brand<span> Name</span></a></p></div></div>
+${NAV_HTML}
+<div class="section"><div class="default-content">
+  <p><a href="/tools/widgets/toggle"><span class="icon icon-more"></span>Menu</a></p>
+</div></div>`;
+
+async function mountFullHeader() {
+  const el = await mountHeader(FULL_HTML);
+  const { decorateHeaderContent } = await import('../../blocks/header/header.js');
+  decorateHeaderContent(el);
   return el;
 }
 
@@ -169,5 +183,25 @@ describe('menu dismissal', () => {
     expect(triggerA.getAttribute('aria-expanded')).to.equal('false');
     expect(triggerB.getAttribute('aria-expanded')).to.equal('true');
     expect(el.querySelectorAll('.main-nav-item.is-open')).to.have.lengthOf(1);
+  });
+});
+
+describe('collapsed mobile nav', () => {
+  afterEach(async () => {
+    await setViewport({ width: 1440, height: 900 });
+  });
+
+  it('is inert when the drawer is shut', async () => {
+    await setViewport({ width: 390, height: 844 });
+    const el = await mountFullHeader();
+    expect(el.querySelector('.main-nav-section').inert).to.equal(true);
+    el.querySelector('.action-wrapper.nav-toggle button').click();
+    expect(el.querySelector('.main-nav-section').inert).to.equal(false);
+  });
+
+  it('is never inert at desktop', async () => {
+    await setViewport({ width: 1440, height: 900 });
+    const el = await mountFullHeader();
+    expect(el.querySelector('.main-nav-section').inert).to.equal(false);
   });
 });

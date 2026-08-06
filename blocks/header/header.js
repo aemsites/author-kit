@@ -93,7 +93,10 @@ function decorateScheme(btn) {
 function decorateNavToggle(btn) {
   btn.addEventListener('click', () => {
     const header = document.body.querySelector('header');
-    if (header) header.classList.toggle('is-mobile-open');
+    if (!header) return;
+    header.classList.toggle('is-mobile-open');
+    // eslint-disable-next-line no-use-before-define
+    syncDrawerState(header);
   });
 }
 
@@ -203,15 +206,29 @@ function decorateActionSection(section) {
   section.classList.add('actions-section');
 }
 
-function decorateHeader(fragment) {
-  const sections = fragment.querySelectorAll(':scope > .section');
+function syncDrawerState(header) {
+  const toggle = header.querySelector('.action-wrapper.nav-toggle button');
+  const drawerMode = !!toggle?.checkVisibility();
+  const isOpen = header.classList.contains('is-mobile-open');
+  const collapsed = drawerMode && !isOpen;
+  for (const section of header.querySelectorAll('.main-nav-section, .actions-section')) {
+    section.inert = collapsed && !section.contains(toggle);
+  }
+  if (toggle) toggle.ariaExpanded = String(drawerMode && isOpen);
+}
+
+export function decorateHeaderContent(header) {
+  const sections = header.querySelectorAll(':scope > .section, :scope > .header-content > .section');
   if (sections[0]) decorateBrandSection(sections[0]);
   if (sections[1]) decorateNavSection(sections[1]);
   if (sections[2]) decorateActionSection(sections[2]);
 
   for (const action of HEADER_ACTIONS) {
-    decorateAction(fragment, action);
+    decorateAction(header, action);
   }
+
+  syncDrawerState(header);
+  new ResizeObserver(() => syncDrawerState(header)).observe(header);
 }
 
 /**
@@ -224,8 +241,8 @@ export default async function init(el) {
   try {
     const fragment = await loadFragment(`${locale.prefix}${path}`);
     fragment.classList.add('header-content');
-    decorateHeader(fragment);
     el.append(fragment);
+    decorateHeaderContent(el);
   } catch (e) {
     throw Error(e);
   }
