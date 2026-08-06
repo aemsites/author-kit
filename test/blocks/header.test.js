@@ -77,6 +77,22 @@ async function mountFullHeader() {
   return el;
 }
 
+// Matches production: the toggle link sits alongside the brand link, in the
+// same section, not in the actions section.
+const BRAND_TOGGLE_HTML = `<div class="section"><div class="default-content">
+  <p><a href="/">Brand<span> Name</span></a></p>
+  <p><a href="/tools/widgets/toggle"><span class="icon icon-more"></span>Menu</a></p>
+</div></div>
+${NAV_HTML}
+<div class="section"><div class="default-content"></div></div>`;
+
+async function mountBrandToggleHeader() {
+  const el = await mountHeader(BRAND_TOGGLE_HTML);
+  const { decorateHeaderContent } = await import('../../blocks/header/header.js');
+  decorateHeaderContent(el);
+  return el;
+}
+
 describe('menu triggers', () => {
   it('is a button wired to its menu', async () => {
     const el = await mountNav();
@@ -195,6 +211,8 @@ describe('collapsed mobile nav', () => {
     await setViewport({ width: 390, height: 844 });
     const el = await mountFullHeader();
     expect(el.querySelector('.main-nav-section').inert).to.equal(true);
+    // Toggle lives in the actions section here: the guard must keep it reachable.
+    expect(el.querySelector('.actions-section').inert).to.equal(false);
     el.querySelector('.action-wrapper.nav-toggle button').click();
     expect(el.querySelector('.main-nav-section').inert).to.equal(false);
   });
@@ -203,5 +221,17 @@ describe('collapsed mobile nav', () => {
     await setViewport({ width: 1440, height: 900 });
     const el = await mountFullHeader();
     expect(el.querySelector('.main-nav-section').inert).to.equal(false);
+  });
+
+  it('inerts the actions section, not the brand section, when the toggle ships in brand', async () => {
+    await setViewport({ width: 390, height: 844 });
+    const el = await mountBrandToggleHeader();
+    const toggle = el.querySelector('.action-wrapper.nav-toggle button');
+    expect(el.querySelector('.actions-section').inert).to.equal(true);
+    expect(el.querySelector('.brand-section').inert).to.equal(false);
+    expect(el.querySelector('.main-nav-section').inert).to.equal(true);
+    expect(toggle.ariaExpanded).to.equal('false');
+    toggle.click();
+    expect(toggle.ariaExpanded).to.equal('true');
   });
 });
