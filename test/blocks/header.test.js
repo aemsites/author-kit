@@ -65,4 +65,27 @@ describe('menu triggers', () => {
     trigger.click();
     expect(trigger.getAttribute('aria-expanded')).to.equal('false');
   });
+
+  it('leaves the plain nav link alone', async () => {
+    const el = await mountNav();
+    const plain = el.querySelector('a[href="/plain"]');
+    expect(plain.tagName).to.equal('A');
+    expect(plain.getAttribute('href')).to.equal('/plain');
+    expect(plain.hasAttribute('aria-expanded')).to.equal(false);
+  });
+
+  it('aria-controls resolves to the menu element', async () => {
+    const el = await mountNav();
+    const trigger = el.querySelector('button.main-nav-link');
+    const menu = el.querySelector('.menu');
+    expect(document.getElementById(trigger.getAttribute('aria-controls'))).to.equal(menu);
+  });
+
+  it('gives each mount a distinct menu id', async () => {
+    const elA = await mountNav();
+    const elB = await mountNav();
+    const idA = elA.querySelector('.menu').id;
+    const idB = elB.querySelector('.menu').id;
+    expect(idA).to.not.equal(idB);
+  });
 });
