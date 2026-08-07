@@ -385,3 +385,34 @@ describe('mobile drawer', () => {
     expect(net).to.equal(0);
   });
 });
+
+describe('skip link', () => {
+  it('uses authored text when present', async () => {
+    document.body.append(document.createElement('main'));
+    const el = await mountHeader('<div class="section"><div class="default-content"><p><a href="/tools/widgets/skip">Zum Inhalt springen</a></p></div></div>');
+    const { decorateSkipLink } = await import('../../blocks/header/header.js');
+    decorateSkipLink(el);
+    const skip = el.querySelector('.skip-link');
+    expect(skip.textContent).to.equal('Zum Inhalt springen');
+    expect(skip.hasAttribute('lang')).to.equal(false);
+    document.querySelector('main').remove();
+  });
+
+  it('falls back to English marked as English', async () => {
+    document.body.append(document.createElement('main'));
+    const el = await mountHeader('<div class="section"></div>');
+    const { decorateSkipLink } = await import('../../blocks/header/header.js');
+    decorateSkipLink(el);
+    const skip = el.querySelector('.skip-link');
+    expect(skip.textContent).to.equal('Skip to main content');
+    expect(skip.getAttribute('lang')).to.equal('en');
+    document.querySelector('main').remove();
+  });
+
+  it('is not created without a main landmark', async () => {
+    const el = await mountHeader('<div class="section"></div>');
+    const { decorateSkipLink } = await import('../../blocks/header/header.js');
+    decorateSkipLink(el);
+    expect(el.querySelector('.skip-link')).to.equal(null);
+  });
+});

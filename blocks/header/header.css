@@ -47,6 +47,21 @@ header {
     clip-path: inset(50%);
   }
 
+  .skip-link:focus {
+    position: fixed;
+    top: 8px;
+    left: 8px;
+    width: auto;
+    height: auto;
+    margin: 0;
+    padding: var(--spacing-s);
+    overflow: visible;
+    clip-path: none;
+    z-index: 1002;
+    background-color: light-dark(var(--color-light), var(--color-dark));
+    outline: 2px solid currentcolor;
+  }
+
   .btn {
     margin-block: 6px;
   }

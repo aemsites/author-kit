@@ -208,6 +208,27 @@ function decorateNavItem(li) {
   });
 }
 
+const SKIP_PATH = '/tools/widgets/skip';
+const SKIP_FALLBACK = 'Skip to main content';
+
+export function decorateSkipLink(header) {
+  const main = document.querySelector('main');
+  if (!main) return;
+  if (!main.id) main.id = 'main';
+  const authored = header.querySelector(`[href*="${SKIP_PATH}"]`);
+  const skip = document.createElement('a');
+  skip.className = 'skip-link a11y-clip';
+  skip.href = `#${main.id}`;
+  if (authored) {
+    skip.textContent = authored.textContent;
+    authored.parentElement.remove();
+  } else {
+    skip.textContent = SKIP_FALLBACK;
+    skip.lang = 'en';
+  }
+  header.prepend(skip);
+}
+
 function decorateBrandSection(section) {
   section.classList.add('brand-section');
   const brandLink = section.querySelector('a');
@@ -256,6 +277,7 @@ function syncDrawerState(header) {
 }
 
 export function decorateHeaderContent(header) {
+  decorateSkipLink(header);
   const sections = header.querySelectorAll(':scope > .section, :scope > .header-content > .section');
   if (sections[0]) decorateBrandSection(sections[0]);
   if (sections[1]) decorateNavSection(sections[1]);
