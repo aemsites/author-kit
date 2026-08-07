@@ -30,6 +30,58 @@ Report findings. Do not fix them unless asked.
 Steps 1–5 are synchronous and block the first section. Anything added there delays every paint on
 every page.
 
+## Parallelise with purpose
+
+Awaited and unawaited async are both deliberate here. The pattern is consistent once you see it:
+
+- The LCP image and the first section's blocks **race** — same paint, so concurrency costs nothing
+  and finishing sooner helps.
+- Blocks within a section run **concurrently** — all of them are needed for that section to render.
+- Sections are **awaited one at a time** — section 3's blocks racing section 0's would saturate
+  bandwidth and delay LCP for content nobody can see yet.
+
+The unit is **everything needed for the next visible milestone**. Parallelise inside it, await at
+its edge.
+
+Three separate questions get confused here. Ask them one at a time.
+
+**Does the next statement need this?** Await only when what follows reads the result — DOM it
+queries, state it branches on. `await Promise.all(linkBlocks)` earns its await because the div-block
+phase must see fragment content already in place. `import('./postlcp.js')` is not awaited because
+nothing after it depends on the header existing. An `await` on a result nothing consumes is pure
+latency.
+
+**Do these belong in the same batch?** Group by milestone, not by convenience. Work feeding one
+paint goes in one `Promise.all`. Work feeding a paint the user cannot see yet belongs after the
+boundary, not in the batch.
+
+**Is this needed now at all?** If not, it belongs in `lazy.js` or `postlcp.js`. Most additions
+justified as "prefetch for speed" fail this one.
+
+### Kick off now, consume later
+
+Between "await it now" and "defer it entirely" sits the option that is usually right for slow data:
+start the request early, hand the **promise** forward, and await it where the result is used.
+
+```js
+const data = fetch(url).then((r) => r.json());   // started, not awaited
+// … later, where it is actually needed
+render(await data);
+```
+
+Awaiting at the start blocks a phase for data nobody needs yet. Starting at the end creates a
+waterfall. Handing the promise forward removes both and costs nothing.
+
+This only works where the promise can reach its consumer. A prefetch fired from generic loader code
+for a block that does not exist yet — see the leak check — pays the complexity and collects none of
+the benefit.
+
+### Reviewing it
+
+Flag: an `await` whose result nothing reads; sequential `await`s over independent work; a
+`Promise.all` mixing this-paint work with later-paint work; a fetch awaited in a phase that runs
+before its consumer.
+
 ## The core rule
 
 **A diff touching `scripts/ak.js` should be assumed wrong until it argues otherwise.** `ak.js` is
