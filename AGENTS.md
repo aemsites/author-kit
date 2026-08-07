@@ -59,6 +59,11 @@ npm run test:file -- ./test/scripts/x.test.js   # single file
 Tests run in a real browser, so DOM and computed styles are available. `@web/test-runner-commands`
 provides `setViewport` for exercising media queries.
 
+`aem up` serves this repo's code but proxies **content** from the published origin, which it derives
+from the git remote — there is no `fstab.yaml`. For this repo that is
+`https://main--author-kit--aemsites.aem.page`. So a local page is your working tree plus live
+content: blocks and fragments come from the origin, and nothing renders without it.
+
 ## Load pipeline
 
 `scripts/scripts.js` is the per-project config layer and the only file most forks edit: it declares
@@ -115,3 +120,11 @@ from any one file:
 - **Tests that call `loadArea` or `decorateLink` must `setConfig` first** with at least `hostnames`
   and `linkBlocks`; otherwise link decoration throws into the catch and the failure is easy to
   misread as a product bug.
+
+## When this file does not have the answer
+
+Edge Delivery platform behaviour that is not specific to this repo lives at
+[aem.live](https://www.aem.live/docs/), with agent-oriented guidance at
+[aem.live/developer/ai-coding-agents](https://www.aem.live/developer/ai-coding-agents). Prefer those
+over inferring platform semantics from this codebase — much of what looks like project convention
+here is actually Edge Delivery convention.
