@@ -122,6 +122,31 @@ async function mountToggleLanguageHeader() {
   return el;
 }
 
+const BRAND_TEXT_AND_SPAN_HTML = '<div class="section"><div class="default-content"><p><a href="/">Brand<span> Name</span></a></p></div></div>';
+const BRAND_TEXT_ONLY_HTML = '<div class="section"><div class="default-content"><p><a href="/">Brand</a></p></div></div>';
+
+async function mountBrandHeader(html) {
+  const el = await mountHeader(html);
+  const { decorateHeaderContent } = await import('../../blocks/header/header.js');
+  decorateHeaderContent(el);
+  return el;
+}
+
+describe('brand section', () => {
+  it('wraps the trailing text node in a span when the brand link has one', async () => {
+    const el = await mountBrandHeader(BRAND_TEXT_AND_SPAN_HTML);
+    const span = el.querySelector('.brand-text');
+    expect(span.textContent).to.equal(' Name');
+  });
+
+  it('does not render "undefined" when the brand link is a single text node', async () => {
+    const el = await mountBrandHeader(BRAND_TEXT_ONLY_HTML);
+    const link = el.querySelector('.brand-section a');
+    expect(link.textContent).to.equal('Brand');
+    expect(link.querySelector('.brand-text')).to.equal(null);
+  });
+});
+
 describe('menu triggers', () => {
   it('is a button wired to its menu', async () => {
     const el = await mountNav();
