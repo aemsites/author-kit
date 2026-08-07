@@ -1,7 +1,8 @@
 # Header accessibility
 
 Date: 2026-08-05
-Status: approved, not yet implemented
+Status: implemented 2026-08-07 on `header-a11y`. Manual screen reader pass still outstanding — see
+Verification. This document is the design record; the code is the source of truth from here.
 
 ## Problem
 
@@ -25,12 +26,11 @@ removes them from the accessibility tree. The visibility mechanism does not chan
 
 1. **The design must not change.** Interaction behaviour defers to accessibility best practice
    (soft close, focus management); visual appearance does not change at either breakpoint.
-2. **Browser support floor: Baseline Newly Available.** If it works in the current stable release
-   of Chrome, Safari and Firefox, it is available to AK. Live at HEAD applies to browser support
-   the same way it applies to code. Recording this policy in `AGENTS.md` — which currently says
-   only "target evergreen browsers, no polyfills" — is a deliverable of this work, not a footnote.
-   Anchor positioning was checked against it during design and qualifies (Baseline 2026, shipped
-   unflagged in all three engines).
+2. **Browser support floor: Baseline Newly available.** A feature qualifies once it ships in the
+   current stable release of every core browser — which includes mobile Safari and Firefox for
+   Android, not just the desktop three. Live at HEAD applies to browser support the same way it
+   applies to code. Recording this policy in `AGENTS.md` is a deliverable of this work, not a
+   footnote. Anchor positioning was checked against it during design and qualifies.
 3. **Buildless.** No new runtime dependencies. Every shipped line counts.
 
 ## Decisions
