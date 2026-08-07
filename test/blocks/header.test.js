@@ -124,6 +124,11 @@ async function mountToggleLanguageHeader() {
 
 const BRAND_TEXT_AND_SPAN_HTML = '<div class="section"><div class="default-content"><p><a href="/">Brand<span> Name</span></a></p></div></div>';
 const BRAND_TEXT_ONLY_HTML = '<div class="section"><div class="default-content"><p><a href="/">Brand</a></p></div></div>';
+const BRAND_NO_LINK_HTML = `<div class="section"><div class="default-content"><p>No link</p></div></div>
+${NAV_HTML}
+<div class="section"><div class="default-content">
+  <p><a href="/tools/widgets/toggle"><span class="icon icon-more"></span>Menu</a></p>
+</div></div>`;
 
 async function mountBrandHeader(html) {
   const el = await mountHeader(html);
@@ -144,6 +149,13 @@ describe('brand section', () => {
     const link = el.querySelector('.brand-section a');
     expect(link.textContent).to.equal('Brand');
     expect(link.querySelector('.brand-text')).to.equal(null);
+  });
+
+  it('does not throw when the brand section has no link, and the rest of the header still decorates', async () => {
+    const el = await mountBrandHeader(BRAND_NO_LINK_HTML);
+    expect(el.querySelector('.brand-section')).to.not.equal(null);
+    expect(el.querySelector('.main-nav-section')).to.not.equal(null);
+    expect(el.querySelector('.action-wrapper.nav-toggle')).to.not.equal(null);
   });
 });
 

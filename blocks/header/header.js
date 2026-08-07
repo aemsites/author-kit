@@ -253,6 +253,7 @@ export function decorateSkipLink(header) {
 function decorateBrandSection(section) {
   section.classList.add('brand-section');
   const brandLink = section.querySelector('a');
+  if (!brandLink) return;
   const [, text] = brandLink.childNodes;
   if (!text) return;
   const span = document.createElement('span');
