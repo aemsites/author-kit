@@ -46,23 +46,16 @@ This governs review as much as code. Defensive scaffolding against perverse inpu
 and a long list of theoretical edge cases costs more attention than it returns. Things worth doing
 later go in GitHub issues, not in guards, comments, or docs.
 
-## Commands
+## Local development
 
-```bash
-aem up                                    # local dev server (needs @adobe/aem-cli globally)
-npm run lint                              # eslint + stylelint
-npm test                                  # web-test-runner, real Chrome, with coverage
-npm run test:watch
-npm run test:file -- ./test/scripts/x.test.js   # single file
-```
+`aem up` (needs `@adobe/aem-cli` installed globally) serves this repo's code but proxies **content**
+from the published origin, which it derives from the git remote — there is no `fstab.yaml`. For this
+repo that is `https://main--author-kit--aemsites.aem.page`. A local page is your working tree plus
+live content: blocks and fragments come from the origin, and nothing renders without it.
 
-Tests run in a real browser, so DOM and computed styles are available. `@web/test-runner-commands`
-provides `setViewport` for exercising media queries.
-
-`aem up` serves this repo's code but proxies **content** from the published origin, which it derives
-from the git remote — there is no `fstab.yaml`. For this repo that is
-`https://main--author-kit--aemsites.aem.page`. So a local page is your working tree plus live
-content: blocks and fragments come from the origin, and nothing renders without it.
+Tests run in real Chrome via **web-test-runner** — not jsdom. Do not reach for Jest or Vitest. DOM
+APIs and computed styles both work against a real layout, and `@web/test-runner-commands` provides
+`setViewport` for exercising media queries.
 
 ## Load pipeline
 
