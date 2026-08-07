@@ -93,6 +93,35 @@ async function mountBrandToggleHeader() {
   return el;
 }
 
+const ACTIONS_HTML = `<div class="section"><div class="default-content">
+  <p><a href="/tools/widgets/scheme"><span class="icon icon-toggle"></span>Scheme</a></p>
+  <p><a href="/tools/widgets/language"><span class="icon icon-globe"></span>Language</a></p>
+</div></div>`;
+
+async function mountFullHeaderWithActions() {
+  const el = await mountHeader(ACTIONS_HTML);
+  const { decorateHeaderContent } = await import('../../blocks/header/header.js');
+  decorateHeaderContent(el);
+  return el;
+}
+
+// Matches a project that authors the nav toggle into the actions section
+// (alongside language) instead of the brand section, with the toggle link
+// ahead of the language link in document order.
+const TOGGLE_LANGUAGE_HTML = `<div class="section"><div class="default-content"><p><a href="/">Brand<span> Name</span></a></p></div></div>
+${NAV_HTML}
+<div class="section"><div class="default-content">
+  <p><a href="/tools/widgets/toggle"><span class="icon icon-more"></span>Menu</a></p>
+  <p><a href="/tools/widgets/language"><span class="icon icon-globe"></span>Language</a></p>
+</div></div>`;
+
+async function mountToggleLanguageHeader() {
+  const el = await mountHeader(TOGGLE_LANGUAGE_HTML);
+  const { decorateHeaderContent } = await import('../../blocks/header/header.js');
+  decorateHeaderContent(el);
+  return el;
+}
+
 describe('menu triggers', () => {
   it('is a button wired to its menu', async () => {
     const el = await mountNav();
@@ -465,5 +494,57 @@ describe('nav labelling', () => {
     section2.dataset.label = 'Hauptnavigation';
     decorateNavSection(section2);
     expect(el2.querySelector('nav').getAttribute('aria-label')).to.equal('Hauptnavigation');
+  });
+});
+
+describe('action state', () => {
+  afterEach(() => {
+    localStorage.removeItem('color-scheme');
+    document.body.classList.remove('dark-scheme', 'light-scheme');
+  });
+
+  it('reports scheme as a pressed toggle', async () => {
+    const el = await mountFullHeaderWithActions();
+    const btn = el.querySelector('.action-wrapper.scheme button');
+    const before = btn.getAttribute('aria-pressed');
+    expect(before).to.be.oneOf(['true', 'false']);
+    btn.click();
+    expect(btn.getAttribute('aria-pressed')).to.not.equal(before);
+  });
+
+  it('reflects dark mode already in effect at decoration time', async () => {
+    document.body.classList.add('dark-scheme');
+    const el = await mountFullHeaderWithActions();
+    const btn = el.querySelector('.action-wrapper.scheme button');
+    expect(btn.getAttribute('aria-pressed')).to.equal('true');
+  });
+
+  it('reports language as expandable', async () => {
+    const el = await mountFullHeaderWithActions();
+    const btn = el.querySelector('.action-wrapper.language button');
+    expect(btn.getAttribute('aria-expanded')).to.equal('false');
+  });
+
+  it('resets the language trigger on close without touching a nav toggle sharing its section', async () => {
+    const originalFetch = window.fetch;
+    window.fetch = async () => ({ ok: true, text: async () => '<main><div></div></main>' });
+    try {
+      const el = await mountToggleLanguageHeader();
+      const toggleBtn = el.querySelector('.action-wrapper.nav-toggle button');
+      const langBtn = el.querySelector('.action-wrapper.language button');
+      // Toggle precedes language in document order, inside the same
+      // .actions-section that gains "is-open" when the language menu opens.
+      langBtn.click();
+      await new Promise((resolve) => { setTimeout(resolve, 0); });
+      expect(langBtn.getAttribute('aria-expanded')).to.equal('true');
+      expect(toggleBtn.getAttribute('aria-expanded')).to.equal('false');
+
+      // A click outside the header runs docClose -> closeAllMenus().
+      document.body.click();
+      expect(langBtn.getAttribute('aria-expanded')).to.equal('false');
+      expect(toggleBtn.getAttribute('aria-expanded')).to.equal('false');
+    } finally {
+      window.fetch = originalFetch;
+    }
   });
 });

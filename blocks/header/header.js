@@ -10,7 +10,8 @@ function closeAllMenus() {
   const openMenus = document.body.querySelectorAll('header .is-open');
   for (const openMenu of openMenus) {
     openMenu.classList.remove('is-open');
-    const trigger = openMenu.querySelector('[aria-expanded]');
+    // Exclude the nav toggle: its aria-expanded tracks drawer state, not this menu
+    const trigger = openMenu.querySelector('[aria-expanded]:not(.action-wrapper.nav-toggle button)');
     if (trigger) trigger.ariaExpanded = 'false';
   }
   // eslint-disable-next-line no-use-before-define
@@ -50,6 +51,7 @@ function toggleMenu(menu) {
 
 function decorateLanguage(btn) {
   const section = btn.closest('.section');
+  btn.ariaExpanded = 'false';
   btn.addEventListener('click', async () => {
     let menu = section.querySelector('.language.menu');
     if (!menu) {
@@ -63,10 +65,18 @@ function decorateLanguage(btn) {
       section.append(content);
     }
     toggleMenu(section);
+    btn.ariaExpanded = String(section.classList.contains('is-open'));
   });
 }
 
 function decorateScheme(btn) {
+  const dark = () => {
+    const { classList } = document.body;
+    if (classList.contains('dark-scheme')) return true;
+    if (classList.contains('light-scheme')) return false;
+    return matchMedia('(prefers-color-scheme: dark)').matches;
+  };
+  btn.ariaPressed = String(dark());
   btn.addEventListener('click', async () => {
     const { body } = document;
 
@@ -88,6 +98,7 @@ function decorateScheme(btn) {
     for (const section of sections) {
       setColorScheme(section);
     }
+    btn.ariaPressed = String(dark());
   });
 }
 
