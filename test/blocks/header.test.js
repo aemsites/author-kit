@@ -387,6 +387,10 @@ describe('mobile drawer', () => {
 });
 
 describe('skip link', () => {
+  afterEach(() => {
+    document.querySelector('main')?.remove();
+  });
+
   it('uses authored text when present', async () => {
     document.body.append(document.createElement('main'));
     const el = await mountHeader('<div class="section"><div class="default-content"><p><a href="/tools/widgets/skip">Zum Inhalt springen</a></p></div></div>');
@@ -395,7 +399,6 @@ describe('skip link', () => {
     const skip = el.querySelector('.skip-link');
     expect(skip.textContent).to.equal('Zum Inhalt springen');
     expect(skip.hasAttribute('lang')).to.equal(false);
-    document.querySelector('main').remove();
   });
 
   it('falls back to English marked as English', async () => {
@@ -406,7 +409,6 @@ describe('skip link', () => {
     const skip = el.querySelector('.skip-link');
     expect(skip.textContent).to.equal('Skip to main content');
     expect(skip.getAttribute('lang')).to.equal('en');
-    document.querySelector('main').remove();
   });
 
   it('is not created without a main landmark', async () => {
@@ -414,5 +416,26 @@ describe('skip link', () => {
     const { decorateSkipLink } = await import('../../blocks/header/header.js');
     decorateSkipLink(el);
     expect(el.querySelector('.skip-link')).to.equal(null);
+  });
+
+  it('assigns an id and points the href at it when main has none', async () => {
+    const main = document.createElement('main');
+    document.body.append(main);
+    const el = await mountHeader('<div class="section"></div>');
+    const { decorateSkipLink } = await import('../../blocks/header/header.js');
+    decorateSkipLink(el);
+    expect(main.id).to.equal('main');
+    expect(el.querySelector('.skip-link').getAttribute('href')).to.equal('#main');
+  });
+
+  it('keeps an authored id and points the href at it', async () => {
+    const main = document.createElement('main');
+    main.id = 'content';
+    document.body.append(main);
+    const el = await mountHeader('<div class="section"></div>');
+    const { decorateSkipLink } = await import('../../blocks/header/header.js');
+    decorateSkipLink(el);
+    expect(main.id).to.equal('content');
+    expect(el.querySelector('.skip-link').getAttribute('href')).to.equal('#content');
   });
 });
