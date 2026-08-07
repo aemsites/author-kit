@@ -35,9 +35,19 @@ every page.
 **A diff touching `scripts/ak.js` should be assumed wrong until it argues otherwise.** `ak.js` is
 the shared engine every fork inherits; see "What you own" in `AGENTS.md`.
 
-`scripts.js` is more permissive but only for **data, not logic**. Legitimate: a new `hostnames`
-entry, a new `linkBlocks` pattern, a `components` opt-out, a new locale. Not legitimate: new
-conditional branching, or anything naming a specific block.
+`scripts.js` is more permissive, but only for **data and non-blocking, network-free logic**.
+Building up a synthetic block for `loadArea` to hydrate later is fine — it is synchronous DOM work,
+and the loader takes it from there. A new static import or an awaited JSON fetch is not: both put a
+request ahead of the first section.
+
+Legitimate: a new `hostnames` entry, a `linkBlocks` pattern, a `components` opt-out, a new locale,
+an autoblock that builds markup for `loadArea` to pick up.
+
+Not legitimate: anything awaiting the network, a new static import, or work that could equally
+happen in `lazy.js`.
+
+Note the difference from the leak check below — *constructing* a named block from content is the
+autoblock pattern and is fine. *Querying* for one is the anti-pattern.
 
 ## The leak check
 
