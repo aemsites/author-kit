@@ -191,7 +191,10 @@ header {
     grid-area: actions;
     max-height: 64px;
     overflow: hidden;
-    transition: all 0.2s ease-in-out;
+
+    @media (prefers-reduced-motion: no-preference) {
+      transition: all 0.2s ease-in-out;
+    }
 
     > .default-content {
       display: flex;

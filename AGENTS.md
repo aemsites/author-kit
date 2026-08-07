@@ -26,8 +26,10 @@ There is no bundler or transpiler. Files are served to the browser exactly as th
 (`head.html` loads `/styles/styles.css` and `/scripts/scripts.js` as native ESM). Consequences:
 
 - Editorial comments, dead code, and defensive scaffolding are shipped bytes. Keep code terse.
-- Target evergreen browsers directly — CSS nesting, `:has()`, `light-dark()`, top-level `await`,
-  dynamic `import()` are all used already. No polyfills.
+- Browser support is live at HEAD too: if a feature works in the current stable release of Chrome,
+  Safari and Firefox, it is available here. No polyfills, no `@supports` fallbacks, no build-time
+  transforms. CSS nesting, `:has()`, `light-dark()`, `inert`, `checkVisibility()`, top-level
+  `await` and dynamic `import()` are all in use already.
 - `deps/` holds vendored third-party code (lit, rum) and is eslint-ignored. `npm run build:lit` is
   the one build step, and only for that dependency.
 - Every static import is its own blocking request before first paint, so anything statically
