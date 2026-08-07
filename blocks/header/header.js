@@ -189,6 +189,7 @@ function decorateNavItem(li) {
   li.classList.add('main-nav-item');
   const link = li.querySelector(':scope > p > a');
   if (link) link.classList.add('main-nav-link');
+  if (link && link.pathname === window.location.pathname) link.ariaCurrent = 'page';
   const menu = decorateMegaMenu(li) || decorateMenu(li);
   if (!menu || !link) return;
 
@@ -248,6 +249,7 @@ export function decorateNavSection(section) {
 
   const nav = document.createElement('nav');
   nav.append(navList);
+  if (section.dataset.label) nav.ariaLabel = section.dataset.label;
   navContent.append(nav);
 
   const mainNavItems = section.querySelectorAll('nav > ul > li');

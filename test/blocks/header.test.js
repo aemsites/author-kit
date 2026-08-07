@@ -439,3 +439,31 @@ describe('skip link', () => {
     expect(el.querySelector('.skip-link').getAttribute('href')).to.equal('#content');
   });
 });
+
+describe('nav labelling', () => {
+  it('marks the current page', async () => {
+    const el = await mountHeader(`<div class="section"><div class="default-content"><ul>
+      <li><p><a href="${window.location.pathname}">Here</a></p></li>
+      <li><p><a href="/elsewhere">There</a></p></li>
+    </ul></div></div>`);
+    const { decorateNavSection } = await import('../../blocks/header/header.js');
+    decorateNavSection(el.querySelector('.section'));
+    const [here, there] = el.querySelectorAll('.main-nav-link');
+    expect(here.getAttribute('aria-current')).to.equal('page');
+    expect(there.hasAttribute('aria-current')).to.equal(false);
+  });
+
+  it('labels the nav only when authored', async () => {
+    const el = await mountHeader('<div class="section"><div class="default-content"><ul><li><p><a href="/a">A</a></p></li></ul></div></div>');
+    const section = el.querySelector('.section');
+    const { decorateNavSection } = await import('../../blocks/header/header.js');
+    decorateNavSection(section);
+    expect(el.querySelector('nav').hasAttribute('aria-label')).to.equal(false);
+
+    const el2 = await mountHeader('<div class="section"><div class="default-content"><ul><li><p><a href="/a">A</a></p></li></ul></div></div>');
+    const section2 = el2.querySelector('.section');
+    section2.dataset.label = 'Hauptnavigation';
+    decorateNavSection(section2);
+    expect(el2.querySelector('nav').getAttribute('aria-label')).to.equal('Hauptnavigation');
+  });
+});
