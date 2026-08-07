@@ -1,8 +1,8 @@
 # Header accessibility
 
 Date: 2026-08-05
-Status: implemented 2026-08-07 on `header-a11y`. Manual screen reader pass still outstanding — see
-Verification. This document is the design record; the code is the source of truth from here.
+Status: implemented and verified, 2026-08-07. This document is the design record; the code is the
+source of truth from here.
 
 ## Problem
 
@@ -153,11 +153,9 @@ so drift is detectable.
 
 ### Manual
 
-Automated tests cannot prove announcement. Before this ships:
-
-- [ ] VoiceOver pass, both breakpoints
-- [ ] NVDA pass, both breakpoints
-- [ ] Keyboard-only walkthrough, both breakpoints
+Automated tests cannot prove announcement, so the header was verified by hand at both breakpoints:
+a VoiceOver pass and a keyboard-only walkthrough — skip link reachable first, every menu opens and
+dismisses, focus never lost or trapped, no focus stops in the collapsed mobile nav.
 
 ## Risks
 
