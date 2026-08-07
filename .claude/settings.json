@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm run lint)",
+      "Bash(npm run lint:js)",
+      "Bash(npm run lint:css)",
+      "Bash(npm test)",
+      "Bash(npm run test:file:*)",
+      "Bash(aem up:*)",
+      "Bash(git status:*)",
+      "Bash(git diff:*)",
+      "Bash(git log:*)",
+      "Bash(git show:*)",
+      "WebSearch"
+    ]
+  }
+}

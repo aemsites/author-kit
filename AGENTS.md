@@ -8,6 +8,10 @@ Author Kit is a template repo for AEM Edge Delivery / DA-authored sites. Content
 da.live; this repo is the code half. `README.md` lists the authoring features and design tokens —
 read it for the content-side vocabulary.
 
+When something here looks arbitrary, check `docs/adr/` before changing it — that is where decisions
+the code cannot explain are recorded, and `docs/adr/README.md` says when a new one is warranted.
+Designs for larger bodies of work live in `docs/specs/NNN-topic/`.
+
 ## What you own
 
 Everything except `scripts/ak.js`. It's the shared engine — nearly 400 lines that every fork

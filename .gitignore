@@ -8,6 +8,5 @@ helix-importer-ui
 *.bak
 .idea
 .wrangler
-.claude
+.claude/settings.local.json
 .superpowers
-docs/plans/
