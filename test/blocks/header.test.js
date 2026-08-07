@@ -519,6 +519,13 @@ describe('action state', () => {
     expect(btn.getAttribute('aria-pressed')).to.equal('true');
   });
 
+  it('falls back to matchMedia when no scheme class is set yet', async () => {
+    const prefersDark = matchMedia('(prefers-color-scheme: dark)').matches;
+    const el = await mountFullHeaderWithActions();
+    const btn = el.querySelector('.action-wrapper.scheme button');
+    expect(btn.getAttribute('aria-pressed')).to.equal(String(prefersDark));
+  });
+
   it('reports language as expandable', async () => {
     const el = await mountFullHeaderWithActions();
     const btn = el.querySelector('.action-wrapper.language button');

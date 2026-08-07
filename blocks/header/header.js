@@ -6,12 +6,13 @@ const { locale } = getConfig();
 
 const HEADER_PATH = '/fragments/nav/header';
 
+const menuTriggers = new WeakMap();
+
 function closeAllMenus() {
   const openMenus = document.body.querySelectorAll('header .is-open');
   for (const openMenu of openMenus) {
     openMenu.classList.remove('is-open');
-    // Exclude the nav toggle: its aria-expanded tracks drawer state, not this menu
-    const trigger = openMenu.querySelector('[aria-expanded]:not(.action-wrapper.nav-toggle button)');
+    const trigger = menuTriggers.get(openMenu);
     if (trigger) trigger.ariaExpanded = 'false';
   }
   // eslint-disable-next-line no-use-before-define
@@ -28,7 +29,7 @@ function menuKeydown(e) {
   const open = e.target.closest('.is-open');
   if (!open) return;
   e.stopPropagation();
-  const trigger = open.querySelector('[aria-expanded]');
+  const trigger = menuTriggers.get(open);
   closeAllMenus();
   trigger?.focus();
 }
@@ -52,6 +53,7 @@ function toggleMenu(menu) {
 function decorateLanguage(btn) {
   const section = btn.closest('.section');
   btn.ariaExpanded = 'false';
+  menuTriggers.set(section, btn);
   btn.addEventListener('click', async () => {
     let menu = section.querySelector('.language.menu');
     if (!menu) {
@@ -213,6 +215,7 @@ function decorateNavItem(li) {
   btn.ariaExpanded = 'false';
   btn.setAttribute('aria-controls', menu.id);
   link.replaceWith(btn);
+  menuTriggers.set(li, btn);
 
   btn.addEventListener('click', () => {
     toggleMenu(li);
