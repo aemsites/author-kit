@@ -26,13 +26,25 @@ There is no bundler or transpiler. Files are served to the browser exactly as th
 (`head.html` loads `/styles/styles.css` and `/scripts/scripts.js` as native ESM). Consequences:
 
 - Editorial comments, dead code, and defensive scaffolding are shipped bytes. Keep code terse.
-- Target evergreen browsers directly — CSS nesting, `:has()`, `light-dark()`, top-level `await`,
-  dynamic `import()` are all used already. No polyfills.
+- Browser support is live at HEAD too. **Baseline Newly available** is the bar: a feature qualifies
+  once it ships in the current stable release of every core browser, mobile Safari and Firefox for
+  Android included. No polyfills, no `@supports` fallbacks, no build-time transforms.
 - `deps/` holds vendored third-party code (lit, rum) and is eslint-ignored. `npm run build:lit` is
   the one build step, and only for that dependency.
 - Every static import is its own blocking request before first paint, so anything statically
   reachable from `scripts.js` sits on the LCP critical path. Keep that set minimal and reach for
   dynamic `import()` instead, the way `lazy.js`, `icons.js`, and `error.js` are pulled in.
+
+## What counts as a bug
+
+The happy path, and real bugs within reason. A defect is something a user or a normal authoring
+choice actually hits. A brand link authored without a styled second part is a bug. Calling a
+decorator twice on the same element, or removing a block from the DOM mid-interaction, is not —
+that is asking whether the chainsaw can cut your arm off.
+
+This governs review as much as code. Defensive scaffolding against perverse input is shipped bytes,
+and a long list of theoretical edge cases costs more attention than it returns. Things worth doing
+later go in GitHub issues, not in guards, comments, or docs.
 
 ## Commands
 

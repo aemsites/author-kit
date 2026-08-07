@@ -28,6 +28,40 @@ header {
     text-decoration: none;
   }
 
+  :focus-visible {
+    outline: 2px solid currentcolor;
+    outline-offset: 2px;
+  }
+
+  .a11y-clip,
+  .text,
+  .brand-text {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    border: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    clip-path: inset(50%);
+  }
+
+  .skip-link:focus {
+    position: fixed;
+    top: 8px;
+    left: 8px;
+    width: auto;
+    height: auto;
+    margin: 0;
+    padding: var(--spacing-s);
+    overflow: visible;
+    clip-path: none;
+    z-index: 1002;
+    background-color: light-dark(var(--color-light), var(--color-dark));
+    outline: 2px solid currentcolor;
+  }
+
   .btn {
     margin-block: 6px;
   }
@@ -58,13 +92,6 @@ header {
       .icon {
         width: 24px;
         height: 24px;
-      }
-
-      .text {
-        display: block;
-        width: 0;
-        height: 0;
-        overflow: hidden;
       }
     }
   }
@@ -152,13 +179,6 @@ header {
           width: var(--logo-width);
           height: var(--logo-height);
         }
-
-        .brand-text {
-          display: block;
-          width: 0;
-          height: 0;
-          overflow: hidden;
-        }
       }
     }
 
@@ -171,7 +191,10 @@ header {
     grid-area: actions;
     max-height: 64px;
     overflow: hidden;
-    transition: all 0.2s ease-in-out;
+
+    @media (prefers-reduced-motion: no-preference) {
+      transition: all 0.2s ease-in-out;
+    }
 
     > .default-content {
       display: flex;
@@ -217,6 +240,16 @@ header {
 
     .main-nav-link {
       display: block;
+      width: 100%;
+      appearance: none;
+      background: none;
+      border: 0;
+      padding: 0;
+      margin: 0;
+      font: inherit;
+      color: var(--color-link);
+      text-align: inherit;
+      cursor: pointer;
       line-height: 64px;
     }
 
@@ -286,6 +319,10 @@ header {
       }
     }
 
+    .menu {
+      left: calc(0px - var(--spacing-l));
+    }
+
     .mega-menu {
       > .fragment-content {
         display: grid;
@@ -306,16 +343,20 @@ header {
         max-width: initial;
         margin: 0;
       }
+    }
 
-      .action-wrapper.nav-toggle {
-        display: none;
-      }
+    .action-wrapper.nav-toggle {
+      display: none;
     }
 
     .main-nav-section {
       .main-nav-list {
         display: flex;
         gap: var(--spacing-l);
+      }
+
+      .main-nav-link {
+        width: auto;
       }
 
       .menu {
