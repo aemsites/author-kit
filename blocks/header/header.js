@@ -10,13 +10,11 @@ const menuTriggers = new WeakMap();
 
 function closeAllMenus() {
   const openMenus = document.body.querySelectorAll('header .is-open');
-  for (const openMenu of openMenus) {
-    openMenu.classList.remove('is-open');
-    const trigger = menuTriggers.get(openMenu);
+  for (const container of openMenus) {
+    container.classList.remove('is-open');
+    const trigger = menuTriggers.get(container);
     if (trigger) trigger.ariaExpanded = 'false';
   }
-  // eslint-disable-next-line no-use-before-define
-  document.removeEventListener('click', docClose);
 }
 
 function docClose(e) {
@@ -42,18 +40,22 @@ function menuFocusout(e) {
   closeAllMenus();
 }
 
-function toggleMenu(menu) {
-  const isOpen = menu.classList.contains('is-open');
+function toggleMenu(container) {
+  const isOpen = container.classList.contains('is-open');
   closeAllMenus();
   if (isOpen) return;
   document.addEventListener('click', docClose);
-  menu.classList.add('is-open');
+  container.classList.add('is-open');
+  const trigger = menuTriggers.get(container);
+  if (trigger) trigger.ariaExpanded = 'true';
 }
 
 function decorateLanguage(btn) {
   const section = btn.closest('.section');
   btn.ariaExpanded = 'false';
   menuTriggers.set(section, btn);
+  section.addEventListener('keydown', menuKeydown);
+  section.addEventListener('focusout', menuFocusout);
   btn.addEventListener('click', async () => {
     let menu = section.querySelector('.language.menu');
     if (!menu) {
@@ -67,7 +69,6 @@ function decorateLanguage(btn) {
       section.append(content);
     }
     toggleMenu(section);
-    btn.ariaExpanded = String(section.classList.contains('is-open'));
   });
 }
 
@@ -82,13 +83,7 @@ function decorateScheme(btn) {
   btn.addEventListener('click', async () => {
     const { body } = document;
 
-    let currPref = localStorage.getItem('color-scheme');
-    if (!currPref) {
-      currPref = matchMedia('(prefers-color-scheme: dark)')
-        .matches ? 'dark-scheme' : 'light-scheme';
-    }
-
-    const theme = currPref === 'dark-scheme'
+    const theme = dark()
       ? { add: 'light-scheme', remove: 'dark-scheme' }
       : { add: 'dark-scheme', remove: 'light-scheme' };
 
@@ -116,9 +111,22 @@ function teardownDrawer(header) {
   }
 }
 
+function syncDrawerState(header) {
+  const toggle = header.querySelector('.action-wrapper.nav-toggle button');
+  const drawerMode = !!toggle?.checkVisibility();
+  if (!drawerMode && header.classList.contains('is-mobile-open')) {
+    teardownDrawer(header);
+  }
+  const isOpen = header.classList.contains('is-mobile-open');
+  const collapsed = drawerMode && !isOpen;
+  for (const section of header.querySelectorAll('.main-nav-section, .actions-section')) {
+    section.inert = collapsed && !section.contains(toggle);
+  }
+  if (toggle) toggle.ariaExpanded = String(drawerMode && isOpen);
+}
+
 function closeDrawer(header, toggle) {
   teardownDrawer(header);
-  // eslint-disable-next-line no-use-before-define
   syncDrawerState(header);
   toggle.focus();
 }
@@ -135,7 +143,6 @@ function decorateNavToggle(btn) {
     }
     header.classList.add('is-mobile-open');
     for (const el of document.querySelectorAll('main, footer')) el.inert = true;
-    // eslint-disable-next-line no-use-before-define
     syncDrawerState(header);
     header.querySelector('.main-nav-section a, .main-nav-section button')?.focus();
     const escHandler = (e) => {
@@ -219,7 +226,6 @@ function decorateNavItem(li) {
 
   btn.addEventListener('click', () => {
     toggleMenu(li);
-    btn.ariaExpanded = String(li.classList.contains('is-open'));
   });
 }
 
@@ -276,20 +282,6 @@ export function decorateNavSection(section) {
 
 function decorateActionSection(section) {
   section.classList.add('actions-section');
-}
-
-function syncDrawerState(header) {
-  const toggle = header.querySelector('.action-wrapper.nav-toggle button');
-  const drawerMode = !!toggle?.checkVisibility();
-  if (!drawerMode && header.classList.contains('is-mobile-open')) {
-    teardownDrawer(header);
-  }
-  const isOpen = header.classList.contains('is-mobile-open');
-  const collapsed = drawerMode && !isOpen;
-  for (const section of header.querySelectorAll('.main-nav-section, .actions-section')) {
-    section.inert = collapsed && !section.contains(toggle);
-  }
-  if (toggle) toggle.ariaExpanded = String(drawerMode && isOpen);
 }
 
 export function decorateHeaderContent(header) {

@@ -227,7 +227,7 @@ describe('menu dismissal', () => {
     triggerB.click();
     expect(triggerA.getAttribute('aria-expanded')).to.equal('false');
     expect(triggerB.getAttribute('aria-expanded')).to.equal('true');
-    expect(el.querySelectorAll('.main-nav-item.is-open')).to.have.lengthOf(1);
+    expect(el.querySelectorAll('.main-nav-item.is-open').length).to.equal(1);
   });
 });
 
@@ -333,7 +333,6 @@ describe('mobile drawer', () => {
     // schedules a frame or two after layout settles - poll a few animation
     // frames rather than asserting immediately.
     for (let i = 0; i < 10 && el.classList.contains('is-mobile-open'); i += 1) {
-      // eslint-disable-next-line no-await-in-loop
       await new Promise((resolve) => { requestAnimationFrame(resolve); });
     }
 
@@ -530,6 +529,25 @@ describe('action state', () => {
     const el = await mountFullHeaderWithActions();
     const btn = el.querySelector('.action-wrapper.language button');
     expect(btn.getAttribute('aria-expanded')).to.equal('false');
+  });
+
+  it('closes the language menu on Escape and returns focus to the trigger', async () => {
+    const originalFetch = window.fetch;
+    window.fetch = async () => ({ ok: true, text: async () => '<main><div><p><a href="/de">DE</a></p></div></main>' });
+    try {
+      const el = await mountFullHeaderWithActions();
+      const btn = el.querySelector('.action-wrapper.language button');
+      btn.click();
+      await new Promise((resolve) => { setTimeout(resolve, 0); });
+      expect(btn.getAttribute('aria-expanded')).to.equal('true');
+      const link = el.querySelector('.language.menu a');
+      link.focus();
+      link.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+      expect(btn.getAttribute('aria-expanded')).to.equal('false');
+      expect(document.activeElement === btn).to.equal(true);
+    } finally {
+      window.fetch = originalFetch;
+    }
   });
 
   it('resets the language trigger on close without touching a nav toggle sharing its section', async () => {
