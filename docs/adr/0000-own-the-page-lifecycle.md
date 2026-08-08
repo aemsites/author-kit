@@ -60,8 +60,18 @@ only the project knows. A single well-placed hook is a smaller surface to get wr
 
 ## Consequences
 
-Improvements to load ordering reach every site instead of being reimplemented, correctly or
-otherwise, in each `scripts.js`. That is the whole return.
+Load-ordering improvements get made once, in one place, instead of being reimplemented — correctly
+or otherwise — in every project's `scripts.js`. That is the whole return.
+
+Distribution is what keeps that affordable. Author Kit is a template, not a dependency: a project
+generated today holds its own copy of `ak.js`, and nothing pulls it forward. The engine can change,
+or be trimmed, without reaching back into shipped sites — which is what allowed the legacy
+section-metadata shim to be deleted once Edge Delivery began flattening metadata server-side, while
+projects built against the older rendering carried on untouched. The costs below are paid once, at
+generation, not continuously.
+
+The same property cuts the other way: a fix does not arrive at a site that has not adopted it.
+Propagation is opt-in.
 
 Both projects protect their engine file — Adobe's guidance is that `aem.js` is the core library of
 Edge Delivery and must never be modified, and "What you own" in `AGENTS.md` says the same of
