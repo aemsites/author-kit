@@ -41,7 +41,8 @@ Awaited and unawaited async are both deliberate here. The pattern is consistent 
   bandwidth and delay LCP for content nobody can see yet.
 
 The unit is **everything needed for the next visible milestone**. Parallelise inside it, await at
-its edge.
+its edge. See [ADR 0002](../../../docs/adr/0002-serialise-sections-parallelise-within-them.md) for
+why the section loop is serial and what breaks if someone "optimises" it.
 
 Three separate questions get confused here. Ask them one at a time.
 
