@@ -81,8 +81,6 @@ The costs are real:
 - **Author Kit fails closed.** Sections are hidden by CSS, so if JavaScript never runs the page
   renders nothing, where the boilerplate would show unstyled markup. A deliberate trade for a
   platform where JS is assumed.
-- **No `buildBlock` primitive.** Auto-blocking is link-pattern-driven, so synthesising a block from
-  page metadata rather than a link needs building.
 - **Ecosystem gravity.** The boilerplate is what documentation, tutorials, and new hires assume.
   Divergence has a real onboarding cost, which `AGENTS.md` and these records exist to offset.
 
