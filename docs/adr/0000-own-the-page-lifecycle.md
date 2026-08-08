@@ -94,6 +94,24 @@ The costs are real:
 - **Ecosystem gravity.** The boilerplate is what documentation, tutorials, and new hires assume.
   Divergence has a real onboarding cost, which `AGENTS.md` and these records exist to offset.
 
-The reversal this record guards against is the conclusion that Author Kit should be "just a
-boilerplate fork" — adopting the library shape to reduce divergence. Doing so would return the
-pipeline to every project, and with it the class of mistakes that motivated this in the first place.
+## The reversals this guards against
+
+**"Author Kit should just be a boilerplate fork."** Adopting the library shape to reduce divergence
+would return the pipeline to every project, and with it the reason this exists.
+
+**"You could have done all of this inside a boilerplate project."** True, and worth stating
+precisely, because it is the strongest objection. Nothing in `aem.js` forces a project through
+`loadSection` or `decorateIcons` — a project can decline to call them and write its own. About 205
+lines of the library are commodity utilities worth keeping: `loadCSS`, `getMetadata`,
+`createOptimizedPicture`, `loadBlock`. The other ~270 are the pipeline and its decorators, and
+reaching parity means replacing them.
+
+So the objection resolves to: yes, at the cost of ~270 lines of engine work that lives in a
+project-owned file, diverges from every other project, and reaches none of them. That is the least
+defensible of the three positions — full responsibility for an architecture, pinned to utilities you
+are told not to modify, and nothing to carry forward.
+
+None of which claims this engine is correct. The claim is about where decisions live. Made once, in
+one place, they can be read, argued with, and fixed, and the fix reaches the next project. Made
+privately in each `scripts.js`, the same decision is made a thousand times over, and nothing
+aggregates — no one is in a position to notice the pattern, let alone repair it.
