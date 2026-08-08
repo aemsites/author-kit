@@ -1,5 +1,14 @@
 import { loadArea, setConfig } from './ak.js';
 
+// Satisfies require-trusted-types-for; runs before loadPage reaches any sink.
+if (window.trustedTypes?.createPolicy) {
+  window.trustedTypes.createPolicy('default', {
+    createHTML: (input) => input,
+    createScriptURL: (input) => input,
+    createScript: (input) => input,
+  });
+}
+
 const hostnames = ['authorkit.dev'];
 
 const locales = {
