@@ -83,7 +83,6 @@ The costs are real:
   platform where JS is assumed.
 - **No `buildBlock` primitive.** Auto-blocking is link-pattern-driven, so synthesising a block from
   page metadata rather than a link needs building.
-- **No CSP or Trusted Types.** The boilerplate ships both. This is a gap, not a decision.
 - **Ecosystem gravity.** The boilerplate is what documentation, tutorials, and new hires assume.
   Divergence has a real onboarding cost, which `AGENTS.md` and these records exist to offset.
 
