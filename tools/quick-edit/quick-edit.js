@@ -15,7 +15,13 @@ function addImportmap() {
 }
 
 async function loadMoudle(origin, payload) {
-  const { default: loadQuickEdit } = await import(`${origin}/nx/public/plugins/quick-edit/quick-edit.js`);
+  // `origin` derives from the `quick-edit` URL param; only import from trusted da-nx origins.
+  const url = new URL(`${origin}/nx/public/plugins/quick-edit/quick-edit.js`);
+  const trusted = url.hostname === 'da.live'
+    || url.hostname === 'localhost'
+    || url.hostname.endsWith('--da-nx--adobe.aem.live');
+  if (!trusted) return;
+  const { default: loadQuickEdit } = await import(url.href);
   loadQuickEdit(payload, loadPage);
 }
 
