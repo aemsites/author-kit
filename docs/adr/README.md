@@ -2,6 +2,10 @@
 
 Decisions that shaped this project, and why. Numbered, immutable, newest last.
 
+Start with [0000](0000-own-the-page-lifecycle.md) — why Author Kit exists alongside the Adobe
+boilerplate. It is numbered zero because it is prologue: the decision to have this project at all,
+rather than a decision made within it.
+
 ## When a decision needs an ADR
 
 **The trigger test: would a future reader reverse this by accident?**
