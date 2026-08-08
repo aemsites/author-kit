@@ -259,40 +259,9 @@ function groupChildren(section) {
   return groups;
 }
 
-function toClassName(name) {
-  return typeof name === 'string'
-    ? name
-      .toLowerCase()
-      .replace(/[^0-9a-z]/gi, '-')
-      .replace(/-+/g, '-')
-      .replace(/^-|-$/g, '')
-    : '';
-}
-
 function decorateSection(section) {
   // Always add section class
   section.classList.add('section');
-
-  // Find the legacy DOM-based metadata
-  const metaEl = section.querySelector(':scope > .section-metadata');
-  if (metaEl) {
-    [...metaEl.children].forEach((row) => {
-      const key = row.children[0].textContent.trim().toLowerCase();
-      const content = row.children[1];
-      if (content) {
-        const text = content.querySelector('img')?.src ?? content.textContent.trim().toLowerCase();
-        if (key && text) {
-          if (key === 'style') {
-            const styles = text.split(',').map((style) => toClassName(style));
-            section.classList.add(...styles);
-            return;
-          }
-          section.dataset[key] = text;
-        }
-      }
-    });
-    metaEl.remove();
-  }
 
   // Determine if the section needs section-metadata.js
   const meta = section.classList.length > 1 || Object.keys(section.dataset).length;
