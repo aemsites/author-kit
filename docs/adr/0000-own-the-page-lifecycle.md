@@ -61,8 +61,13 @@ only the project knows. A single well-placed hook is a smaller surface to get wr
 ## Consequences
 
 Improvements to load ordering reach every site instead of being reimplemented, correctly or
-otherwise, in each `scripts.js`. That is the whole return, and it is why `ak.js` carries an ownership
-rule (see "What you own" in `AGENTS.md`) that no boilerplate file needs.
+otherwise, in each `scripts.js`. That is the whole return.
+
+Both projects protect their engine file — Adobe's guidance is that `aem.js` is the core library of
+Edge Delivery and must never be modified, and "What you own" in `AGENTS.md` says the same of
+`ak.js`. The difference is what the boundary encloses. Protecting a library of helpers still leaves
+the pipeline in project-owned `scripts.js`, free to diverge; protecting `ak.js` protects the
+pipeline itself. The rule is the same, drawn around different things.
 
 The lifecycle is also legible: one function, read top to bottom, is the entire load. Tracing the
 boilerplate's requires holding two files and eight function names.
