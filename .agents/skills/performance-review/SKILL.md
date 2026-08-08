@@ -73,9 +73,10 @@ render(await data);
 Awaiting at the start blocks a phase for data nobody needs yet. Starting at the end creates a
 waterfall. Handing the promise forward removes both and costs nothing.
 
-This only works where the promise can reach its consumer. A prefetch fired from generic loader code
-for a block that does not exist yet — see the leak check — pays the complexity and collects none of
-the benefit.
+This only works where the promise can reach its consumer, and where whatever you key off actually
+exists at that point. A selector for markup another block builds during its own `init()` matches
+nothing when `decorateArea` runs, so the prefetch never fires and the complexity is paid for
+nothing. Check the node is there before relying on it.
 
 ### Reviewing it
 
@@ -119,22 +120,6 @@ an autoblock that builds markup for `loadArea` to pick up.
 
 Not legitimate: anything awaiting the network, a new static import, or work that could equally
 happen in `lazy.js`.
-
-Note the difference from the leak check below — *constructing* a named block from content is the
-autoblock pattern and is fine. *Querying* for one is the anti-pattern.
-
-## The leak check
-
-Generic loader code must not know about specific blocks. Flag any `querySelector` for a named
-block's class, or a dynamic `import()` by block name, appearing in `scripts.js`, `ak.js`, or
-`decorateArea`.
-
-Two reasons beyond tidiness. First, the timing is usually wrong — blocks created by *other* blocks
-during `init()` do not exist yet when `decorateArea` runs, so the selector silently matches nothing
-on every real page and the "optimisation" never fires. Second, it is nearly always solving the
-wrong layer: reserved CSS space costs nothing and cannot race.
-
-The fix is the same every time: let the block do it in its own `init()`.
 
 ## The ruthless test
 
