@@ -82,6 +82,27 @@ Flag: an `await` whose result nothing reads; sequential `await`s over independen
 `Promise.all` mixing this-paint work with later-paint work; a fetch awaited in a phase that runs
 before its consumer.
 
+## Load what this request uses
+
+Deferring is not the same as not loading. `lazy.js` runs after paint and *still* gates author
+tooling behind `ENV !== 'prod'` — a visitor should never download the sidekick.
+
+**If a module is not needed by every request, guard it and import it dynamically.**
+
+| Where | Guard |
+|---|---|
+| `loadIcons` | `if (!icons.length) return;` before the import |
+| `lazy.js` | `ENV !== 'prod'` for scheduler and sidekick |
+| `LOG` → `error.js` | imported only when something throws |
+| `loadExperience` | skips the CSS request for names in `components` |
+
+The subtle failure is an **unguarded dynamic import** — `import()` inside a function that always
+runs is a static import with extra steps: the request moved later but never went away. The test is
+whether a condition stands in front of it.
+
+Flag: a new static import of something conditional; a dynamic import with no guard; a guard placed
+after the import rather than before.
+
 ## The core rule
 
 **A diff touching `scripts/ak.js` should be assumed wrong until it argues otherwise.** `ak.js` is
@@ -144,15 +165,14 @@ defensive work as shipped bytes.
 
 ## Mechanical checks
 
-**Critical-path imports.** Everything statically reachable from `scripts.js` is fetched before first
-paint, and with no bundler each import is its own request.
+**Imports.** With no bundler every static import is its own request, and everything reachable from
+`scripts.js` is fetched before first paint.
 
 ```bash
 git diff <base>..HEAD -- '*.js' | grep -E '^\+import .* from'
 ```
 
-A new static `import` in a file already on that graph is a finding. Dynamic `import()` is the
-intended escape hatch — `lazy.js`, `icons.js` and `error.js` all use it.
+Judge each hit against "Load what this request uses" above.
 
 **Blocking resources.** Any `<link rel="stylesheet">`, non-module `<script>`, or synchronous
 third-party tag added to `head.html`.
