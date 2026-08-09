@@ -14,7 +14,7 @@
 
 **Tech Stack:** Vanilla ES modules, no build. `@web/test-runner` in real Chrome for tests. Playwright driven from `$AK_VISUAL` outside the repo (never added to `package.json`) for visual regression.
 
-**Spec:** `docs/specs/2026-08-05-header-accessibility-design.md`
+**Spec:** [`spec.md`](spec.md)
 
 ## Global Constraints
 
