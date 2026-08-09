@@ -2,9 +2,17 @@
 
 Decisions that shaped this project, and why. Numbered, immutable, newest last.
 
-Start with [0000](0000-own-the-page-lifecycle.md) — why Author Kit exists alongside the Adobe
-boilerplate. It is numbered zero because it is prologue: the decision to have this project at all,
-rather than a decision made within it.
+- [0000. Own the page lifecycle instead of shipping a toolbox](0000-own-the-page-lifecycle.md) —
+  why Author Kit exists alongside the Adobe boilerplate, and what `ak.js` owns.
+- [0001. Record architecture decisions](0001-record-architecture-decisions.md) — why these records
+  exist and what qualifies for one.
+- [0002. Serialise sections, parallelise within them](0002-serialise-sections-parallelise-within-them.md) —
+  why the section loop awaits one section at a time.
+- [0003. Target Baseline Newly available](0003-target-baseline-newly-available.md) — the browser
+  support floor, and why nothing in the codebase has a fallback.
+
+Start with 0000. It is numbered zero because it is prologue: the decision to have this project at
+all, rather than a decision made within it.
 
 ## When a decision needs an ADR
 
@@ -14,12 +22,14 @@ If someone could look at the code, see no reason for a choice, and undo it — w
 reason is visible in the code itself, don't. A commit message covers most changes; an ADR covers
 the ones where the code cannot explain itself.
 
-Passes the test:
+Passes the test — each of these is a record here:
 
 - Browser support floor is Baseline Newly available — nothing in the code says why not older.
-- Menu dismissal is hand-rolled rather than using the Popover API — the code shows *what*, not why
-  the obvious modern choice was rejected.
+  [0003](0003-target-baseline-newly-available.md)
+- Sections are awaited one at a time — read cold, the loop looks like a missed optimisation.
+  [0002](0002-serialise-sections-parallelise-within-them.md)
 - `scripts/ak.js` is the shared engine forks inherit — invisible from inside the file.
+  [0000](0000-own-the-page-lifecycle.md)
 
 Fails the test:
 
@@ -37,6 +47,11 @@ never editing the original, because the record of what you believed then is the 
 - The superseding ADR links back: `Supersedes [NNNN](NNNN-title.md)`.
 
 Two links, no rewriting. A reader following either direction gets the whole history.
+
+There is no `proposed` status. An ADR under review is an open pull request, and merging is what
+accepts it — so nothing half-decided ever sits in this directory. A decision that needs arguing
+before anyone will write it down belongs in an issue or a [spec](../specs/README.md). Two open PRs
+can claim the same number; the second one to merge renumbers.
 
 ## Format
 
@@ -60,8 +75,15 @@ What this costs and what it rules out. The part future readers need most.
 ## Relationship to specs
 
 ADRs record a decision. Specs in `docs/specs/` design a body of work and usually contain several
-decisions. A spec that turns out to hinge on one durable choice is worth extracting into an ADR —
-the header accessibility spec's rejection of the Popover API is the example.
+decisions. Most of those stay in the spec: they are scoped to the thing being built and stop
+mattering when it is rebuilt. A spec decision is worth extracting only when it also passes the
+trigger test above.
+
+The header spec's rejection of the Popover API is the useful near-miss. It looks durable, but the
+reason is local — the same node is an in-flow accordion below 900px and an overlay above it, and a
+popover cannot be in flow. Redesign the header and the reasoning evaporates with it. That belongs
+in [`docs/specs/001-header-accessibility/`](../specs/001-header-accessibility/spec.md), which is
+where it is.
 
 ## For projects built from this template
 
