@@ -42,6 +42,10 @@ Fails the test:
 An ADR is immutable once merged. Changing your mind means writing a new one that supersedes it —
 never editing the original, because the record of what you believed then is the point.
 
+What is immutable is the decision, not the bytes. Typos, broken links and missing metadata get
+fixed in place — none of them is a belief, and a rule that forbids correcting them is one nobody
+can follow. Anything that changes what was decided, or why, needs a new record.
+
 - New ADRs are `Status: accepted`.
 - A superseded ADR gets one line added: `Superseded by [NNNN](NNNN-title.md)`. Nothing else changes.
 - The superseding ADR links back: `Supersedes [NNNN](NNNN-title.md)`.
@@ -55,11 +59,12 @@ can claim the same number; the second one to merge renumbers.
 
 ## Format
 
-Four headings, as short as the decision allows. Most fit on one screen.
+Four headings and an optional fifth, as short as the decision allows. Most fit on one screen.
 
 ```markdown
 # NNNN. Title in the imperative
 
+Date: YYYY-MM-DD
 Status: accepted
 
 ## Context
@@ -70,7 +75,22 @@ What we chose, stated plainly.
 
 ## Consequences
 What this costs and what it rules out. The part future readers need most.
+
+## The reversals this guards against
+Optional. The specific diffs that would undo this while looking like improvements.
 ```
+
+`Date` is the date the ADR was accepted. It is in the file rather than left to `git log` because
+this is a template: a generated project gets a snapshot, not a history, so nothing outside the
+document survives into the repositories that inherit it.
+
+The optional fifth heading is worth writing when the decision is one a reasonable person would
+reverse on sight — [0003](0003-target-baseline-newly-available.md) names three such diffs. It is
+the trigger test above, written down for the reader who is about to fail it.
+
+One reversal belongs in `Consequences`, as the last thing it says;
+[0002](0002-serialise-sections-parallelise-within-them.md) does it in a sentence. Several earn the
+heading, because a list buried in a closing paragraph is a list nobody reads.
 
 ## Relationship to specs
 

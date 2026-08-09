@@ -1,5 +1,6 @@
 # 0002. Serialise sections, parallelise within them
 
+Date: 2026-08-07
 Status: accepted
 
 ## Context

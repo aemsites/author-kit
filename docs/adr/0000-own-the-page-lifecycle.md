@@ -1,5 +1,6 @@
 # 0000. Own the page lifecycle instead of shipping a toolbox
 
+Date: 2026-08-07
 Status: accepted
 
 ## Context
