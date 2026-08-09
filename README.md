@@ -18,6 +18,16 @@ For projects that want a few more batteries. Built by the team who brought you d
 1. Open the `{repo}` folder in your favorite code editor and buil something.
 1. **Recommended:** Install common npm packages like linting and testing: `npm i`.
 
+## Docs
+
+* [`AGENTS.md`](AGENTS.md) — how the code is organised: the load pipeline, the block contract, and
+  the authoring conventions encoded in code. Written for coding agents, and the fastest orientation
+  for people too.
+* [`docs/adr/`](docs/adr/) — architecture decision records. Why the page lifecycle lives in
+  `ak.js`, why sections load one at a time, why the browser floor has no fallbacks. Read these
+  before changing something that looks arbitrary.
+* [`docs/specs/`](docs/specs/) — designs for larger bodies of work.
+
 ## Features
 
 ### Localization & globalization
