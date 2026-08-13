@@ -10,6 +10,10 @@ Decisions that shaped this project, and why. Numbered, immutable, newest last.
   why the section loop awaits one section at a time.
 - [0003. Target Baseline Newly available](0003-target-baseline-newly-available.md) — the browser
   support floor, and why nothing in the codebase has a fallback.
+- [0004. Reference SVG icons through `<use>`](0004-reference-svg-through-use.md) — why every icon
+  file answers to the same `#icon`, and what the shadow boundary costs.
+- [0005. Version the engine, not the repository](0005-version-the-engine-not-the-repository.md) —
+  what the number in `package.json` tracks, and why one line of `ak.js` outweighs the rest.
 
 Start with 0000. It is numbered zero because it is prologue: the decision to have this project at
 all, rather than a decision made within it.
