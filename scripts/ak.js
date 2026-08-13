@@ -236,7 +236,7 @@ function decorateLinks(el) {
 function loadIcons(el) {
   const icons = el.querySelectorAll('span.icon');
   if (!icons.length) return;
-  import('./utils/icons.js').then((mod) => mod.default(icons));
+  import('./utils/svg.js').then((mod) => mod.default(icons));
 }
 
 function groupChildren(section) {

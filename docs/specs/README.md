@@ -7,6 +7,8 @@ Designs for bodies of work large enough that the design needs settling before th
   for the header block, without changing how it looks.
 - [002-agentic-workflow](002-agentic-workflow/spec.md) — how this repo is structured for coding
   agents, and what a fork inherits.
+- [003-svg-handling](003-svg-handling/spec.md) — what an icon in this project is, and the skill
+  that enforces it.
 
 ## When a spec is warranted
 

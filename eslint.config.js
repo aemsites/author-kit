@@ -74,5 +74,10 @@ export default defineConfig([
       'no-underscore-dangle': 0,
       'no-unused-expressions': 0,
     },
-  }
+  },
+  {
+    files: ['.agents/skills/**/*.js'],
+    languageOptions: { globals: { ...globals.node } },
+    rules: { 'no-console': 'off' },
+  },
 ]);

@@ -37,7 +37,7 @@ There is no bundler or transpiler. Files are served to the browser exactly as th
   the one build step, and only for that dependency.
 - Every static import is its own blocking request before first paint, so anything statically
   reachable from `scripts.js` sits on the LCP critical path. Keep that set minimal and reach for
-  dynamic `import()` instead, the way `lazy.js`, `icons.js`, and `error.js` are pulled in.
+  dynamic `import()` instead, the way `lazy.js`, `svg.js`, and `error.js` are pulled in.
 
 ## What counts as a bug
 

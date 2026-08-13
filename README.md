@@ -15,8 +15,26 @@ For projects that want a few more batteries. Built by the team who brought you d
 1. Clone your new repo to your computer.
 1. Install the AEM CLI using your terminal: `sudo npm install -g @adobe/aem-cli`
 1. Start the AEM CLI: `aem up`.
-1. Open the `{repo}` folder in your favorite code editor and buil something.
+1. Open the `{repo}` folder in your favorite code editor and build something.
 1. **Recommended:** Install common npm packages like linting and testing: `npm i`.
+
+## Syncing from template
+Every project made from this template gets its own history and is a snapshot in time. If you want the latest code from this template, the following commands are helpful. Be mindful of [the release notes](https://github.com/aemsites/author-kit/releases) for any potential impact to your existing project.
+
+### Add remote named `template`
+```bash
+git remote add template https://github.com/aemsites/author-kit.git
+```
+
+### Get latest branches from the `template` remote
+```bash
+git fetch template
+```
+
+### Check out the file you want
+```bash
+git checkout template/main -- scripts/ak.js
+```
 
 ## Docs
 
@@ -29,14 +47,6 @@ For projects that want a few more batteries. Built by the team who brought you d
 * [`docs/specs/`](docs/specs/) — designs for larger bodies of work.
 
 ## Features
-
-### Localization & globalization
-* Language only support - Ex: en, de, hi, ja
-* Region only support - Ex: en-us, en-ca, de-de, de-ch
-* Hybrid support - Ex: en, en-us, de, de-ch, de-at
-* Fragment-based localized 404s
-* Localized Header & Footer
-* Do not translate support (#_dnt)
 
 ### Flexible section authoring
 * Optional containers to constrain content
@@ -56,12 +66,27 @@ For projects that want a few more batteries. Built by the team who brought you d
 * Deep link support
 * Modal support
 
+### Icons / SVGs
+* Turns `:name:` into `<svg ...><use href="/img/icons/<name>.svg#icon"></use></svg>`
+* Supports `currentColor` via `fill` and `stroke`
+* Supports design tokens — `style="fill: var(--color-<token>)"` in the file, following light/dark
+* Complex use cases like off-origin or deep CSS selection supported via `loadHrefSvg` in `svg.js`
+* Sanitize supplied SVGs with the [`svg-prep`](.agents/skills/svg-prep/SKILL.md) skill
+
 ### Header and footer content
 * Brand - First link in header
 * Main Menu - First list in header
 * Actions - Last section of header
 * Menu & mega menu support
 * Disable header/footer via meta props
+
+### Localization & globalization
+* Language only support - Ex: en, de, hi, ja
+* Region only support - Ex: en-us, en-ca, de-de, de-ch
+* Hybrid support - Ex: en, en-us, de, de-ch, de-at
+* Fragment-based localized 404s
+* Localized Header & Footer
+* Do not translate support (#_dnt)
 
 ### Scheduled content
 * Schedule content using spreadsheets
@@ -121,7 +146,7 @@ accent, primary, secondary, negative
 1 - 6
 
 ### Color tokens
-blue, gray, green, magenta, organge, red, purple, yellow
+blue, gray, green, magenta, orange, red, purple, yellow
 (w/ 100-900 variations)
 
 ### Color schemes
