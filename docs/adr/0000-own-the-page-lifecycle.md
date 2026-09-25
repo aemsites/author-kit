@@ -17,7 +17,7 @@ pipeline lives in each project's `scripts.js`, which defines `loadEager`, `loadL
 Every project owns a copy.
 
 That is a reasonable design for a reference implementation. Its job is to be minimal and
-unopinionated, because it is the floor shipped to everyone; a reference that parallelised block
+unopinionated, because it is the floor shipped to everyone; a reference that parallelized block
 loading and shipped an i18n system would be deciding on behalf of people who never asked.
 
 But a pipeline copied into a thousand repositories has a failure mode, and it showed up in practice:
@@ -42,14 +42,14 @@ configuration — `hostnames`, `locales`, `linkBlocks`, `components` — plus on
 The engine therefore guarantees, rather than merely enabling:
 
 - **Blocks within a section load concurrently; sections are awaited in order.** See
-  [0002](0002-serialise-sections-parallelise-within-them.md).
+  [0002](0002-serialize-sections-parallelize-within-them.md).
 - **Icons load per section**, not per page, and are emitted as inline `<svg><use>` rather than
-  `<img>`, so they inherit `currentColor` and follow the active colour scheme. An
+  `<img>`, so they inherit `currentColor` and follow the active color scheme. An
   `<img>`-referenced SVG is a separate document that CSS cannot reach into.
 - **Sections are hidden by the stylesheet in `head`**, not by JavaScript, and revealed only once
   their blocks and block CSS have resolved. The boilerplate applies `display: none` from
   `decorateSections`, leaving a window before JS runs in which raw authored markup paints.
-- **Localisation is engine-level** — locale prefixes, link localisation, `#_dnt`. The boilerplate
+- **Localization is engine-level** — locale prefixes, link localization, `#_dnt`. The boilerplate
   hardcodes `document.documentElement.lang = 'en'`.
 - **Auto-blocking is declarative.** `linkBlocks: [{ fragment: '/fragments/' }]` replaces the
   hand-written `buildAutoBlocks` that each project otherwise maintains.

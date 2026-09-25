@@ -34,7 +34,7 @@ const tag = ({ name, attrs, selfClose }) => {
   return `<${name}${pairs}${selfClose ? '/>' : '>'}`;
 };
 
-export function serialise(tokens) {
+export function serialize(tokens) {
   const lines = [];
   let depth = 0;
   for (const [i, token] of tokens.entries()) {
@@ -69,7 +69,7 @@ function decorateRoot(root, findings) {
     findings.push({
       level: 'error',
       code: 'no-viewbox',
-      message: 'no viewBox, and no width/height to synthesise one from',
+      message: 'no viewBox, and no width/height to synthesize one from',
     });
     return false;
   }
@@ -178,7 +178,7 @@ function readStyle(token) {
 const WHITE = new Set(['#fff', '#ffffff', 'white']);
 
 function paint(tokens, findings, { flatten, keep, palette }) {
-  const colours = new Set();
+  const colors = new Set();
   for (const token of tokens.filter((t) => t.type === 'open')) {
     readStyle(token);
     for (const prop of PAINT) {
@@ -191,39 +191,39 @@ function paint(tokens, findings, { flatten, keep, palette }) {
             message: `${prop}="${value}" cannot become currentColor`,
           });
         } else {
-          colours.add(value.toLowerCase());
+          colors.add(value.toLowerCase());
         }
       }
     }
   }
-  if (colours.size > 1) {
-    const knockout = [...colours].some((c) => WHITE.has(c))
+  if (colors.size > 1) {
+    const knockout = [...colors].some((c) => WHITE.has(c))
       ? ' — a white among them is a probable knockout, and flattening it fills the icon solid'
       : '';
     if (palette) {
       findings.push({
         level: 'warn',
-        code: 'multi-colour',
-        message: `palette kept as authored: ${[...colours].join(', ')} — it will not follow the colour scheme`,
+        code: 'multi-color',
+        message: `palette kept as authored: ${[...colors].join(', ')} — it will not follow the color scheme`,
       });
       return;
     }
     if (!flatten) {
       findings.push({
         level: 'error',
-        code: 'multi-colour',
-        message: `${colours.size} distinct colours: ${[...colours].join(', ')}${knockout}`,
+        code: 'multi-color',
+        message: `${colors.size} distinct colors: ${[...colors].join(', ')}${knockout}`,
       });
       return;
     }
   }
   if (palette) {
-    if (colours.size) {
+    if (colors.size) {
       findings.push({
         level: 'warn',
         code: 'palette-suppressed',
-        message: `--palette left ${[...colours].join(', ')} as authored — this icon will not follow`
-          + ' the colour scheme',
+        message: `--palette left ${[...colors].join(', ')} as authored — this icon will not follow`
+          + ' the color scheme',
       });
     }
     return;
@@ -267,7 +267,7 @@ function inspect(tokens, findings, { name }) {
     findings.push({
       level: 'warn',
       code: 'filename',
-      message: `"${name}" is not lower kebab-case — an authored :name: sanitises to that, and the file has to match`,
+      message: `"${name}" is not lower kebab-case — an authored :name: sanitizes to that, and the file has to match`,
     });
   }
 }
@@ -292,7 +292,7 @@ function inspectViewBox(root, findings) {
   });
 }
 
-export default function normalise(svg, { name, flatten, keep, palette }) {
+export default function normalize(svg, { name, flatten, keep, palette }) {
   const findings = [];
   let tokens = parse(svg);
   const root = tokens.find((t) => t.type === 'open' && t.name === 'svg');
@@ -304,5 +304,5 @@ export default function normalise(svg, { name, flatten, keep, palette }) {
     paint(tokens, findings, { flatten, keep, palette });
   }
   if (findings.some((f) => f.level === 'error')) return { svg, findings };
-  return { svg: serialise(tokens), findings };
+  return { svg: serialize(tokens), findings };
 }

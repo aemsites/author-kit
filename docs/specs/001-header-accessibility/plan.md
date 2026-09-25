@@ -1,5 +1,5 @@
 > **Historical record.** The plan for work completed on 2026-08-07, reduced when `spec.md` was
-> marked implemented. Eleven task briefs are summarised to a line each; Task 4 is kept in full as
+> marked implemented. Eleven task briefs are summarized to a line each; Task 4 is kept in full as
 > the worked example of the format. The unreduced 1117-line text is in git:
 >
 > ```bash
@@ -33,9 +33,9 @@
 
 | File | Responsibility | Change |
 |---|---|---|
-| `blocks/header/header.js` | All header decoration and behaviour | Modify |
+| `blocks/header/header.js` | All header decoration and behavior | Modify |
 | `blocks/header/header.css` | Header styling incl. new hidden/focus utilities | Modify |
-| `test/blocks/header.test.js` | Behaviour tests | Create |
+| `test/blocks/header.test.js` | Behavior tests | Create |
 | `AGENTS.md` | Browser support policy | Modify |
 
 `header.js` is 201 lines and gains roughly 60. That keeps it under ~270, which is within the range of other blocks in the repo — no split needed. If it passes ~350 during implementation, stop and raise it rather than splitting unilaterally.
@@ -254,7 +254,7 @@ the useful half of that estimate; the point estimate was not.
 
 Four further corrections were made to the plan while the work was in flight rather than to the
 code — ARIA IDL properties over `setAttribute` and a single clip rule (`ef1be34`), expected test
-counts (`4928b87`), visual harness stabilisation (`1b8c09d`, `160f42f`), and Task 4's
+counts (`4928b87`), visual harness stabilization (`1b8c09d`, `160f42f`), and Task 4's
 `aria-expanded` rationale (`5a850ce`).
 
 ## Notes for the implementer

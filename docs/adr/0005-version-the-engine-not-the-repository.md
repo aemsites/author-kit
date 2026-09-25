@@ -36,7 +36,7 @@ though it sits elsewhere on disk, because a fork that takes the engine without i
 engine.
 
 This release is the worked example. The change to `ak.js` is one line — the dynamic import at
-`scripts/ak.js:239` moved from `./utils/icons.js` to `./utils/svg.js` — and the file's own behaviour
+`scripts/ak.js:239` moved from `./utils/icons.js` to `./utils/svg.js` — and the file's own behavior
 is identical either side of it. The disruptive part of the release is elsewhere: every icon in a
 fork blanks until its `img/icons/` is re-run, per [0004](0004-reference-svg-through-use.md). That
 part is project-owned, and on its own it would have moved the version by nothing.
@@ -44,7 +44,7 @@ part is project-owned, and on its own it would have moved the version by nothing
 It is 2.0.0 anyway, because a fork that takes the new `ak.js` without also taking
 `scripts/utils/svg.js` is importing a file that does not exist. The import rejects and no icon
 loads at all — not an empty box where an icon should be, no icon and no box. That is `ak.js`
-breaking, in one line, with no visible change to its own behaviour.
+breaking, in one line, with no visible change to its own behavior.
 
 ## Consequences
 
@@ -73,7 +73,7 @@ mean the engine, and the next reader has to diff `ak.js` themselves — which is
 exists to save.
 
 **Leaving the version alone because the `ak.js` diff was one line.** Same release, opposite error,
-and the likelier one in review: an import path changed, the file's behaviour did not, and it reads
+and the likelier one in review: an import path changed, the file's behavior did not, and it reads
 as a refactor. What broke is not in the line, it is in the file the line now names.
 
 **Bumping the minor for a release full of new blocks and tokens.** Ordinary semver hygiene, and it

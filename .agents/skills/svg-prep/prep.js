@@ -1,6 +1,6 @@
 import { readFileSync, writeFileSync, readdirSync, statSync } from 'node:fs';
 import { join, basename, extname } from 'node:path';
-import normalise from './normalise.js';
+import normalize from './normalize.js';
 
 const args = process.argv.slice(2);
 const flatten = args.includes('--flatten');
@@ -19,7 +19,7 @@ for (const file of paths.flatMap(svgsIn)) {
   try {
     const before = readFileSync(file, 'utf8');
     const name = basename(file, '.svg');
-    const { svg, findings } = normalise(before, { name, flatten, keep, palette });
+    const { svg, findings } = normalize(before, { name, flatten, keep, palette });
     const errored = findings.some((f) => f.level === 'error');
     if (!errored) writeFileSync(file, `${svg}\n`);
     failed ||= errored;

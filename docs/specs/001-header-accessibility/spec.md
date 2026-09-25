@@ -24,7 +24,7 @@ removes them from the accessibility tree. The visibility mechanism does not chan
 
 ## Constraints
 
-1. **The design must not change.** Interaction behaviour defers to accessibility best practice
+1. **The design must not change.** Interaction behavior defers to accessibility best practice
    (soft close, focus management); visual appearance does not change at either breakpoint.
 2. **Browser support floor: Baseline Newly available.** A feature qualifies once it ships in the
    current stable release of every core browser — which includes mobile Safari and Firefox for
@@ -40,7 +40,7 @@ removes them from the accessibility tree. The visibility mechanism does not chan
 The same DOM node is an in-flow accordion below 900px and an absolutely positioned overlay above
 it. A shown popover always renders in the top layer and cannot participate in normal document
 flow, so adopting popover would either change the mobile design or require the `popover` attribute
-to be added and removed on a `matchMedia` change — two behaviour modes, forked CSS, and a bad edge
+to be added and removed on a `matchMedia` change — two behavior modes, forked CSS, and a bad edge
 case when the viewport crosses the breakpoint while a menu is open. Constraint 1 rules out the
 first; constraint 3 argues against the second.
 
@@ -48,7 +48,7 @@ Modern features still used: `inert`, `:focus-visible`, `checkVisibility()`, `Res
 `interpolate-size` / `calc-size()`, `@starting-style` with `transition-behavior: allow-discrete`.
 
 **Menu triggers become buttons and the authored href is dropped.** Those items never navigated —
-`preventDefault` runs only when a nav item has a menu — so this matches current behaviour exactly.
+`preventDefault` runs only when a nav item has a menu — so this matches current behavior exactly.
 Plain nav links are untouched. Authors who want the parent destination reachable link it inside the
 menu themselves.
 
@@ -80,7 +80,7 @@ is the only place one is created — an unlabeled nav is acceptable; a mispronou
 | `.text` / `.brand-text` | `width:0;height:0;overflow:hidden` | standard clip-path utility |
 | Skip link | none | first focusable element, visually hidden until focused |
 
-## Behaviour
+## Behavior
 
 **Dismissal.** Escape closes the open menu and returns focus to its trigger. Outside click closes
 (exists today as `docClose`). `focusout` with a `relatedTarget` outside the menu closes it, which
@@ -97,7 +97,7 @@ truth. A `ResizeObserver` on the header recomputes it. Changing the breakpoint i
 change.
 
 **Focus indicators.** `:focus-visible` with `outline: 2px solid currentColor` and an offset;
-`currentColor` adapts to both colour schemes without a second rule. Keyboard only.
+`currentColor` adapts to both color schemes without a second rule. Keyboard only.
 
 **Motion.** The existing `.actions-section` transition and anything added go inside
 `@media (prefers-reduced-motion: no-preference)`.
@@ -110,7 +110,7 @@ change.
 ### Automated
 
 `test/blocks/header.test.js`, web-test-runner in real Chrome, `setViewport` for breakpoints. One
-test per distinct behaviour:
+test per distinct behavior:
 
 1. Collapsed mobile nav is `inert`
 2. `aria-expanded` flips on the trigger, and the trigger is a `<button>`
@@ -179,7 +179,7 @@ dismisses, focus never lost or trapped, no focus stops in the collapsed mobile n
    `aria-current`.
 2. `blocks/header/header.css` — button reset, clip-path label utility, `:focus-visible`,
    reduced-motion guard.
-3. `test/blocks/header.test.js` — the seven behaviours listed under Verification.
+3. `test/blocks/header.test.js` — the seven behaviors listed under Verification.
 4. `AGENTS.md` — record the browser-support policy from constraint 2.
 5. Release note entry, per the rule set with v1.4.0.
 

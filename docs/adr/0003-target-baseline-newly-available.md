@@ -12,7 +12,7 @@ browser means hand-written fallbacks, and every one of them ships to every visit
 forever, with nothing to signal when it is safe to remove.
 
 The floor is therefore a decision about shipped bytes, and it needs to be a decision rather than an
-accumulation of individual judgement calls.
+accumulation of individual judgment calls.
 
 Nothing in the code states it. `light-dark()` appears fifteen times across `styles/` and `blocks/`;
 `:has()`, `@container`, `:focus-visible`, CSS nesting, `checkVisibility()` and `inert` are all used
@@ -33,7 +33,7 @@ Two consequences follow directly, and both are already stated in `AGENTS.md`:
   available either, however good the support in the browser you happen to be testing in.
 
 **Not Baseline Widely available**, the conservative choice, which is Newly available plus thirty
-months. It would forbid `light-dark()` today — the alternative being every colour token duplicated
+months. It would forbid `light-dark()` today — the alternative being every color token duplicated
 behind a `prefers-color-scheme` query — and thirty months is roughly the whole useful life of a
 template generation. A project generated today would be built with the platform of three years ago.
 
@@ -65,7 +65,7 @@ support into styles written without it. That is worth knowing at generation rath
 shrinking fraction of nobody, and nothing ever triggers its removal. Cheap once, permanent after.
 
 **Replacing `light-dark()` with duplicated `prefers-color-scheme` blocks.** Reads in a diff as a
-robustness improvement. It doubles the colour layer to widen support that was deliberately declined.
+robustness improvement. It doubles the color layer to widen support that was deliberately declined.
 
 **Reaching for a feature because the browser in front of you has it.** The common failure is the
 ceiling, not the floor — the rule is symmetric and the upper half is the half people forget.

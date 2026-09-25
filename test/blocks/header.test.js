@@ -505,7 +505,7 @@ describe('skip link', () => {
   });
 });
 
-describe('nav labelling', () => {
+describe('nav labeling', () => {
   it('marks the current page', async () => {
     const el = await mountHeader(`<div class="section"><div class="default-content"><ul>
       <li><p><a href="${window.location.pathname}">Here</a></p></li>

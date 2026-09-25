@@ -34,7 +34,7 @@ which is more useful to a fork than an empty directory and a README describing w
 **Skills live in `.agents/skills/`, with `.claude/skills` a symlink.** Same reasoning as
 `CLAUDE.md → @AGENTS.md`, one level down. A different agent harness reads `.agents/` directly.
 
-Known limitation: git stores symlinks, but a Windows checkout without symlink support materialises
+Known limitation: git stores symlinks, but a Windows checkout without symlink support materializes
 them as a text file containing the path, leaving `.claude/skills` broken. Acceptable — the canonical
 location still works, and the fix is one `ln -s`.
 
@@ -72,12 +72,12 @@ docs/specs/NNN-topic/plan.md          when the work needs decomposition
 
 ## The one skill
 
-`performance-review` analyses a diff for the things this project already has opinions about: new
+`performance-review` analyzes a diff for the things this project already has opinions about: new
 statically-reachable imports from `scripts.js`, blocking resources in `head.html`, images without
 dimensions, fonts without `font-display`, new runtime dependencies, payload growth on the critical
 path.
 
-It analyses rather than measures, deliberately. Lighthouse against a proxied dev server produces
+It analyzes rather than measures, deliberately. Lighthouse against a proxied dev server produces
 numbers that are not the published numbers, and every check above is decidable from source.
 
 Its real job is making the LCP rule in `AGENTS.md` checkable — that rule currently relies on

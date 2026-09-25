@@ -1,5 +1,5 @@
 import { expect } from '@esm-bundle/chai';
-import normalise, { parse, serialise } from '../../.agents/skills/svg-prep/normalise.js';
+import normalize, { parse, serialize } from '../../.agents/skills/svg-prep/normalize.js';
 
 describe('parse', () => {
   it('splits elements, attributes and text', () => {
@@ -18,9 +18,9 @@ describe('parse', () => {
   });
 });
 
-describe('serialise', () => {
+describe('serialize', () => {
   it('emits one element per line at two-space indent', () => {
-    const out = serialise(parse('<svg id="a"><g><path d="M0,0Z"/></g></svg>'));
+    const out = serialize(parse('<svg id="a"><g><path d="M0,0Z"/></g></svg>'));
     expect(out).to.equal([
       '<svg id="a">',
       '  <g>',
@@ -31,14 +31,14 @@ describe('serialise', () => {
   });
 
   it('keeps an element with only text on one line', () => {
-    expect(serialise(parse('<svg><text>hi</text></svg>')))
+    expect(serialize(parse('<svg><text>hi</text></svg>')))
       .to.equal('<svg>\n  <text>hi</text>\n</svg>');
   });
 });
 
 describe('root element', () => {
   it('forces the id to icon and drops width, height and the prolog', () => {
-    const { svg } = normalise(
+    const { svg } = normalize(
       '<?xml version="1.0"?><svg id="Layer_1" xmlns="http://www.w3.org/2000/svg"'
       + ' width="20" height="20" viewBox="0 0 20 20"/>',
       { name: 'globe' },
@@ -46,19 +46,19 @@ describe('root element', () => {
     expect(svg).to.equal('<svg id="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"/>');
   });
 
-  it('synthesises a viewBox from width and height', () => {
-    const { svg } = normalise('<svg width="24" height="24"/>', { name: 'a' });
+  it('synthesizes a viewBox from width and height', () => {
+    const { svg } = normalize('<svg width="24" height="24"/>', { name: 'a' });
     expect(svg).to.contain('viewBox="0 0 24 24"');
   });
 
   it('adds the namespace when it is missing', () => {
-    const { svg } = normalise('<svg viewBox="0 0 24 24"/>', { name: 'a' });
+    const { svg } = normalize('<svg viewBox="0 0 24 24"/>', { name: 'a' });
     expect(svg).to.contain('xmlns="http://www.w3.org/2000/svg"');
   });
 
   it('errors and returns the input untouched with no viewBox to build', () => {
     const input = '<svg id="x"/>';
-    const { svg, findings } = normalise(input, { name: 'a' });
+    const { svg, findings } = normalize(input, { name: 'a' });
     expect(svg).to.equal(input);
     expect(findings[0]).to.include({ level: 'error', code: 'no-viewbox' });
   });
@@ -66,7 +66,7 @@ describe('root element', () => {
 
 describe('illustrator classes', () => {
   it('moves class declarations onto the elements and drops the style block', () => {
-    const { svg } = normalise(
+    const { svg } = normalize(
       '<svg viewBox="0 0 24 24"><defs><style>.cls-1{fill:#ed2c85;}</style></defs>'
       + '<path class="cls-1" d="M0,0Z"/></svg>',
       { name: 'a' },
@@ -77,7 +77,7 @@ describe('illustrator classes', () => {
   });
 
   it('leaves an element alone when its class has no declaration', () => {
-    const { svg } = normalise(
+    const { svg } = normalize(
       '<svg viewBox="0 0 24 24"><path class="nope" d="M0,0Z"/></svg>',
       { name: 'a' },
     );
@@ -85,7 +85,7 @@ describe('illustrator classes', () => {
   });
 
   it('keeps a defs that still holds real content after the style is dropped', () => {
-    const { svg } = normalise(
+    const { svg } = normalize(
       '<svg viewBox="0 0 24 24"><defs><style>.cls-1{fill:#ed2c85;}</style>'
       + '<linearGradient id="g"/></defs><path class="cls-1" d="M0,0Z"/></svg>',
       { name: 'a' },
@@ -97,7 +97,7 @@ describe('illustrator classes', () => {
   });
 
   it('paints every class in a grouped selector list', () => {
-    const { svg } = normalise(
+    const { svg } = normalize(
       '<svg viewBox="0 0 24 24"><style>.cls-1,.cls-2{fill:#1a1a1a}</style>'
       + '<path class="cls-1" d="M0,0Z"/><path class="cls-2" d="M1,1Z"/></svg>',
       { name: 'a' },
@@ -106,7 +106,7 @@ describe('illustrator classes', () => {
   });
 
   it('ignores a selector that is not a bare class', () => {
-    const { svg } = normalise(
+    const { svg } = normalize(
       '<svg viewBox="0 0 24 24"><style>#icon path,.cls-1 .cls-2{fill:#1a1a1a}</style>'
       + '<path class="cls-1" d="M0,0Z"/></svg>',
       { name: 'a' },
@@ -116,7 +116,7 @@ describe('illustrator classes', () => {
   });
 
   it('lets a class declaration beat the presentation attribute it overrides', () => {
-    const { svg, findings } = normalise(
+    const { svg, findings } = normalize(
       '<svg viewBox="0 0 24 24"><style>.cls-1{fill:#fff}</style>'
       + '<path class="cls-1" fill="#1a1a1a" d="M0,0Z"/><path fill="#fff" d="M1,1Z"/></svg>',
       { name: 'a' },
@@ -126,7 +126,7 @@ describe('illustrator classes', () => {
   });
 
   it('survives two adjacent defs', () => {
-    const { svg } = normalise(
+    const { svg } = normalize(
       '<svg viewBox="0 0 24 24"><defs><style>.cls-1{fill:#1a1a1a}</style></defs>'
       + '<defs><clipPath id="c"><rect width="24" height="24"/></clipPath></defs>'
       + '<path class="cls-1" clip-path="url(#c)" d="M0,0Z"/></svg>',
@@ -137,7 +137,7 @@ describe('illustrator classes', () => {
   });
 
   it('resolves the first rule through a CDATA-wrapped stylesheet', () => {
-    const { svg } = normalise(
+    const { svg } = normalize(
       '<svg viewBox="0 0 24 24"><style><![CDATA[ .cls-1{fill:#1a1a1a} ]]></style>'
       + '<path class="cls-1" d="M0,0Z"/></svg>',
       { name: 'a' },
@@ -146,7 +146,7 @@ describe('illustrator classes', () => {
   });
 
   it('resolves the first rule after a leading CSS comment', () => {
-    const { svg } = normalise(
+    const { svg } = normalize(
       '<svg viewBox="0 0 24 24"><style>/* Generator: Adobe Illustrator */ .cls-1{fill:#1a1a1a}</style>'
       + '<path class="cls-1" d="M0,0Z"/></svg>',
       { name: 'a' },
@@ -156,8 +156,8 @@ describe('illustrator classes', () => {
 });
 
 describe('paint', () => {
-  it('converts a single colour and preserves none', () => {
-    const { svg, findings } = normalise(
+  it('converts a single color and preserves none', () => {
+    const { svg, findings } = normalize(
       '<svg viewBox="0 0 24 24"><path fill="#1a1a1a" stroke="none" d="M0,0Z"/></svg>',
       { name: 'a' },
     );
@@ -167,7 +167,7 @@ describe('paint', () => {
   });
 
   it('reads paint out of an inline style and removes the attribute', () => {
-    const { svg } = normalise(
+    const { svg } = normalize(
       '<svg viewBox="0 0 24 24"><path style="fill:#1a1a1a" d="M0,0Z"/></svg>',
       { name: 'a' },
     );
@@ -175,16 +175,16 @@ describe('paint', () => {
     expect(svg).to.not.contain('style=');
   });
 
-  it('refuses more than one colour and writes nothing', () => {
+  it('refuses more than one color and writes nothing', () => {
     const input = '<svg viewBox="0 0 24 24"><path fill="#ed2c85"/><path fill="#b64aa1"/></svg>';
-    const { svg, findings } = normalise(input, { name: 'a' });
+    const { svg, findings } = normalize(input, { name: 'a' });
     expect(svg).to.equal(input);
-    expect(findings[0]).to.include({ level: 'error', code: 'multi-colour' });
+    expect(findings[0]).to.include({ level: 'error', code: 'multi-color' });
     expect(findings[0].message).to.contain('#ed2c85');
   });
 
-  it('flattens more than one colour when asked', () => {
-    const { svg, findings } = normalise(
+  it('flattens more than one color when asked', () => {
+    const { svg, findings } = normalize(
       '<svg viewBox="0 0 24 24"><path fill="#ed2c85"/><path fill="#fff"/></svg>',
       { name: 'a', flatten: true },
     );
@@ -193,7 +193,7 @@ describe('paint', () => {
   });
 
   it('keeps a nominated value while flattening', () => {
-    const { svg } = normalise(
+    const { svg } = normalize(
       '<svg viewBox="0 0 24 24"><path fill="#ed2c85"/><path fill="#fff"/></svg>',
       { name: 'a', flatten: true, keep: '#fff' },
     );
@@ -201,8 +201,8 @@ describe('paint', () => {
     expect(svg).to.contain('fill="#fff"');
   });
 
-  it('names a probable knockout among the colours it refuses', () => {
-    const { findings } = normalise(
+  it('names a probable knockout among the colors it refuses', () => {
+    const { findings } = normalize(
       '<svg viewBox="0 0 24 24"><path fill="#ed2c85"/><path fill="#fff"/></svg>',
       { name: 'a' },
     );
@@ -210,17 +210,17 @@ describe('paint', () => {
   });
 
   it('does every structural rewrite but leaves the palette alone', () => {
-    const { svg, findings } = normalise(
+    const { svg, findings } = normalize(
       '<svg id="Layer_1" viewBox="0 0 24 24"><path fill="#ed2c85"/><path fill="#b64aa1"/></svg>',
       { name: 'a', palette: true },
     );
     expect(svg).to.contain('id="icon"');
     expect(svg).to.contain('fill="#ed2c85"');
-    expect(findings[0]).to.include({ level: 'warn', code: 'multi-colour' });
+    expect(findings[0]).to.include({ level: 'warn', code: 'multi-color' });
   });
 
   it('reports gradient paint it cannot convert', () => {
-    const { findings } = normalise(
+    const { findings } = normalize(
       '<svg viewBox="0 0 24 24"><path fill="url(#g)"/></svg>',
       { name: 'a' },
     );
@@ -230,7 +230,7 @@ describe('paint', () => {
 
 describe('stripping', () => {
   it('removes script, event handlers, editor metadata and comments', () => {
-    const { svg } = normalise(
+    const { svg } = normalize(
       '<svg viewBox="0 0 24 24"><!-- generator --><title>Layer 1</title><desc>x</desc>'
       + '<metadata>m</metadata><script>alert(1)</script>'
       + '<path data-name="Path 1" onclick="go()" d="M0,0Z"/></svg>',
@@ -243,7 +243,7 @@ describe('stripping', () => {
   });
 
   it('rewrites xlink:href and drops unreferenced descendant ids', () => {
-    const { svg } = normalise(
+    const { svg } = normalize(
       '<svg viewBox="0 0 24 24"><clipPath id="used"/><path id="loose" clip-path="url(#used)"'
       + ' xlink:href="#used"/></svg>',
       { name: 'a' },
@@ -255,7 +255,7 @@ describe('stripping', () => {
   });
 
   it('keeps an id referenced only from a stylesheet or an inline style', () => {
-    const { svg } = normalise(
+    const { svg } = normalize(
       '<svg viewBox="0 0 24 24"><style>.cls-1{clip-path:url(#c)}</style>'
       + '<clipPath id="c"><rect width="24" height="24"/></clipPath>'
       + '<linearGradient id="g"><stop stop-color="#1a1a1a"/></linearGradient>'
@@ -267,7 +267,7 @@ describe('stripping', () => {
   });
 
   it('strips foreignObject and says so', () => {
-    const { svg, findings } = normalise(
+    const { svg, findings } = normalize(
       '<svg viewBox="0 0 24 24"><foreignObject><b>hi</b></foreignObject></svg>',
       { name: 'a' },
     );
@@ -276,7 +276,7 @@ describe('stripping', () => {
   });
 });
 
-const findingsFor = (svg, opts = { name: 'a' }) => normalise(svg, opts).findings.map((f) => f.code);
+const findingsFor = (svg, opts = { name: 'a' }) => normalize(svg, opts).findings.map((f) => f.code);
 
 describe('findings', () => {
   it('reports live text', () => {
@@ -285,7 +285,7 @@ describe('findings', () => {
 
   it('refuses a raster image and writes nothing', () => {
     const input = '<svg viewBox="0 0 24 24"><image href="x.png"/></svg>';
-    const { svg, findings } = normalise(input, { name: 'a' });
+    const { svg, findings } = normalize(input, { name: 'a' });
     expect(svg).to.equal(input);
     expect(findings[0]).to.include({ level: 'error', code: 'raster-image' });
   });
@@ -306,7 +306,7 @@ describe('findings', () => {
   });
 
   it('warns when --palette suppresses a conversion that would have happened', () => {
-    const { svg, findings } = normalise(
+    const { svg, findings } = normalize(
       '<svg viewBox="0 0 24 24"><path fill="#1a1a1a" d="M0,0Z"/></svg>',
       { name: 'a', palette: true },
     );
@@ -322,7 +322,7 @@ describe('findings', () => {
 
 /*
  * Every assertion above is on the output string, and the two ways this transform blanks an icon —
- * a paint that never lands, a reference that dangles — both read fine in a diff. So: normalise an
+ * a paint that never lands, a reference that dangles — both read fine in a diff. So: normalize an
  * Illustrator-shaped export, mount the result, and ask the browser what it painted. The gradient
  * path is the sharp one; Chrome does not render an element whose paint server does not resolve.
  */
@@ -333,15 +333,15 @@ const EXPORT = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" widt
   + '<path class="cls-1" d="M0,0H8V8H0Z"/><path class="cls-2" d="M10,0H18V8H10Z"/>'
   + '<path class="cls-3" fill="#1a1a1a" d="M0,10H24V18H0Z"/></svg>';
 
-describe('a normalised export, rendered', () => {
-  const COLOUR = 'rgb(255, 0, 0)';
+describe('a normalized export, rendered', () => {
+  const COLOR = 'rgb(255, 0, 0)';
   let svg;
   let paths;
 
   before(() => {
-    const { svg: out } = normalise(EXPORT, { name: 'a' });
+    const { svg: out } = normalize(EXPORT, { name: 'a' });
     svg = new DOMParser().parseFromString(out, 'image/svg+xml').documentElement;
-    svg.style.cssText = `position:fixed;top:0;left:0;width:240px;height:240px;color:${COLOUR}`;
+    svg.style.cssText = `position:fixed;top:0;left:0;width:240px;height:240px;color:${COLOR}`;
     document.body.append(svg);
     paths = svg.querySelectorAll('path');
   });
@@ -357,8 +357,8 @@ describe('a normalised export, rendered', () => {
     }
   });
 
-  it('gives the grouped-selector shape the colour of the text around it', () => {
-    expect(getComputedStyle(paths[0]).fill).to.equal(COLOUR);
+  it('gives the grouped-selector shape the color of the text around it', () => {
+    expect(getComputedStyle(paths[0]).fill).to.equal(COLOR);
     expect(document.elementFromPoint(40, 40)).to.equal(paths[0]);
   });
 

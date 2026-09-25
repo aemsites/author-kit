@@ -1,4 +1,4 @@
-# 0002. Serialise sections, parallelise within them
+# 0002. Serialize sections, parallelize within them
 
 Date: 2026-08-07
 Status: accepted
@@ -9,7 +9,7 @@ Status: accepted
 Inside a section it does the opposite — link blocks load together, then div blocks load together,
 each phase a single `Promise.all`.
 
-Read cold, the loop looks like a missed optimisation. Every block on the page could be started at
+Read cold, the loop looks like a missed optimization. Every block on the page could be started at
 once, and the change is a one-line edit. Nothing at the call site explains why it is not.
 
 Bandwidth is the reason. It is finite and shared, so concurrency is only free while the things
@@ -23,7 +23,7 @@ The LCP image sits on the near side of that line, which is why `decorateArea` gi
 
 ## Decision
 
-The unit of concurrency is everything needed for the next visible milestone. Parallelise inside it;
+The unit of concurrency is everything needed for the next visible milestone. Parallelize inside it;
 await at its edge.
 
 Concretely, in `loadArea`:
@@ -42,8 +42,8 @@ tuning, and the ordering degrades gracefully: a long page does not get slower at
 at the bottom.
 
 The cost is that total page-complete time is longer than a fully parallel load would give. That is
-the trade being made deliberately — this optimises for time-to-first-meaningful-paint, not for
-time-to-everything. On a page whose content is entirely above the fold the serialisation buys
+the trade being made deliberately — this optimizes for time-to-first-meaningful-paint, not for
+time-to-everything. On a page whose content is entirely above the fold the serialization buys
 nothing, and it still applies.
 
 It also means a block cannot assume a later section's DOM exists when it runs. Blocks that need to

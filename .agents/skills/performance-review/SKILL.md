@@ -1,6 +1,6 @@
 ---
 name: performance-review
-description: Review a diff for performance cost and lifecycle fragility — before opening a PR, when a change touches scripts.js, ak.js, head.html, images, fonts or dependencies, or when a block wants to hook into core page load for "speed". Analyses the change against the load lifecycle; does not measure.
+description: Review a diff for performance cost and lifecycle fragility — before opening a PR, when a change touches scripts.js, ak.js, head.html, images, fonts or dependencies, or when a block wants to hook into core page load for "speed". Analyzes the change against the load lifecycle; does not measure.
 ---
 
 # Performance review
@@ -9,7 +9,7 @@ This project is buildless and every line ships. Regressions here are not slow fu
 bytes and requests added before first paint, and work hoisted ahead of the lifecycle stage that
 should own it.
 
-This skill analyses; it does not measure. Lighthouse against a proxied dev server produces numbers
+This skill analyzes; it does not measure. Lighthouse against a proxied dev server produces numbers
 that are not the published numbers, and every check below is decidable from source.
 
 Report findings. Do not fix them unless asked.
@@ -19,7 +19,7 @@ Report findings. Do not fix them unless asked.
 | # | Where | What runs | Network |
 |---|---|---|---|
 | 1 | `scripts.js` top level | `setConfig`, then top-level `await loadPage()` | no |
-| 2 | `loadArea` → `decorateSession` / `decorateDoc` (document only) | header mode, `template` metadata, stored colour scheme, hash → `localStorage` | no |
+| 2 | `loadArea` → `decorateSession` / `decorateDoc` (document only) | header mode, `template` metadata, stored color scheme, hash → `localStorage` | no |
 | 3 | `decoratePictures` | adds the 3000px source to `picture:has([loading])` | no |
 | 4 | `config.decorateArea` hook | project-specific; today eager-loads the first image | no |
 | 5 | `decorateSections` | `.section` wrapping, child regrouping, `decorateLinks` | no |
@@ -30,7 +30,7 @@ Report findings. Do not fix them unless asked.
 Steps 1–5 are synchronous and block the first section. Anything added there delays every paint on
 every page.
 
-## Parallelise with purpose
+## Parallelize with purpose
 
 Awaited and unawaited async are both deliberate here. The pattern is consistent once you see it:
 
@@ -40,9 +40,9 @@ Awaited and unawaited async are both deliberate here. The pattern is consistent 
 - Sections are **awaited one at a time** — section 3's blocks racing section 0's would saturate
   bandwidth and delay LCP for content nobody can see yet.
 
-The unit is **everything needed for the next visible milestone**. Parallelise inside it, await at
-its edge. See [ADR 0002](../../../docs/adr/0002-serialise-sections-parallelise-within-them.md) for
-why the section loop is serial and what breaks if someone "optimises" it.
+The unit is **everything needed for the next visible milestone**. Parallelize inside it, await at
+its edge. See [ADR 0002](../../../docs/adr/0002-serialize-sections-parallelize-within-them.md) for
+why the section loop is serial and what breaks if someone "optimizes" it.
 
 Three separate questions get confused here. Ask them one at a time.
 
@@ -130,10 +130,10 @@ For anything added to steps 1–5, ask in order:
 3. **Generic?** — does it work regardless of which blocks are on the page?
 4. **Could it live in the block?** — could the same work happen in that block's `init()`?
 5. **Wrong shelf?** — would `lazy.js` or `postlcp.js` produce an identical visible result?
-6. **Measured or imagined?** — is this fixing a profiled waterfall or a theorised one?
+6. **Measured or imagined?** — is this fixing a profiled waterfall or a theorized one?
 
 **If 1 and 2 are both "no", it does not belong ahead of the section loop.** Question 6 carries the
-most weight: speculative optimisation is the common case, and this project treats unmeasured
+most weight: speculative optimization is the common case, and this project treats unmeasured
 defensive work as shipped bytes.
 
 ## What already runs for free — do not re-solve it

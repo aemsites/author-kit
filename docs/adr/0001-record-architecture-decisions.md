@@ -30,7 +30,7 @@ for superseding. It is deliberately narrow: most changes need no ADR.
 Decisions become greppable and browsable, and a fork inherits the reasoning along with the code —
 which is the whole point for a template.
 
-The cost is a judgement call per decision, and the failure mode is enthusiasm: an `docs/adr/` full
+The cost is a judgment call per decision, and the failure mode is enthusiasm: an `docs/adr/` full
 of records for choices the code already explains is worse than none, because it trains readers to
 skim. The trigger test exists to hold that line, and the honest expectation is a handful of ADRs,
 not dozens.

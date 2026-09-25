@@ -124,7 +124,7 @@ from any one file:
 
 ## When this file does not have the answer
 
-Edge Delivery platform behaviour that is not specific to this repo lives at
+Edge Delivery platform behavior that is not specific to this repo lives at
 [aem.live](https://www.aem.live/docs/), with agent-oriented guidance at
 [aem.live/developer/ai-coding-agents](https://www.aem.live/developer/ai-coding-agents). Prefer those
 over inferring platform semantics from this codebase — much of what looks like project convention

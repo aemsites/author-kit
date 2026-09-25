@@ -6,7 +6,7 @@ Decisions that shaped this project, and why. Numbered, immutable, newest last.
   why Author Kit exists alongside the Adobe boilerplate, and what `ak.js` owns.
 - [0001. Record architecture decisions](0001-record-architecture-decisions.md) — why these records
   exist and what qualifies for one.
-- [0002. Serialise sections, parallelise within them](0002-serialise-sections-parallelise-within-them.md) —
+- [0002. Serialize sections, parallelize within them](0002-serialize-sections-parallelize-within-them.md) —
   why the section loop awaits one section at a time.
 - [0003. Target Baseline Newly available](0003-target-baseline-newly-available.md) — the browser
   support floor, and why nothing in the codebase has a fallback.
@@ -32,8 +32,8 @@ Passes the test — each of these is a record here:
 
 - Browser support floor is Baseline Newly available — nothing in the code says why not older.
   [0003](0003-target-baseline-newly-available.md)
-- Sections are awaited one at a time — read cold, the loop looks like a missed optimisation.
-  [0002](0002-serialise-sections-parallelise-within-them.md)
+- Sections are awaited one at a time — read cold, the loop looks like a missed optimization.
+  [0002](0002-serialize-sections-parallelize-within-them.md)
 - `scripts/ak.js` is the shared engine forks inherit — invisible from inside the file.
   [0000](0000-own-the-page-lifecycle.md)
 
@@ -95,7 +95,7 @@ reverse on sight — [0003](0003-target-baseline-newly-available.md) names three
 the trigger test above, written down for the reader who is about to fail it.
 
 One reversal belongs in `Consequences`, as the last thing it says;
-[0002](0002-serialise-sections-parallelise-within-them.md) does it in a sentence. Several earn the
+[0002](0002-serialize-sections-parallelize-within-them.md) does it in a sentence. Several earn the
 heading, because a list buried in a closing paragraph is a list nobody reads.
 
 ## Relationship to specs

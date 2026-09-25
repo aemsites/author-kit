@@ -1,6 +1,6 @@
 ---
 name: svg-prep
-description: Normalise a supplied SVG into an icon this project can use — before one lands in img/icons/, when an existing icon renders blank or ignores the colour scheme, or after a designer re-export. Rewrites the mechanical parts in place and reports the judgement calls instead of guessing at them.
+description: Normalize a supplied SVG into an icon this project can use — before one lands in img/icons/, when an existing icon renders blank or ignores the color scheme, or after a designer re-export. Rewrites the mechanical parts in place and reports the judgment calls instead of guessing at them.
 ---
 
 # SVG prep
@@ -34,7 +34,7 @@ img/icons/globe.svg  713 → 662 bytes
 
 img/icons/helix-color.svg  not written
   ℹ viewbox-grid: viewBox "0 0 512 512" — renders correctly; re-export on 0 0 24 24 if stroke weight has to match the set
-  ✗ multi-colour: 2 distinct colours: #ed2c85, #b64aa1
+  ✗ multi-color: 2 distinct colors: #ed2c85, #b64aa1
 ```
 
 `✗` means that file was left untouched and the run exits 1. Every other file in the run is still
@@ -46,10 +46,10 @@ that is already written — read them, then decide.
 | | |
 |---|---|
 | Root `id` | set to `icon`, whatever it was |
-| `viewBox` | required; synthesised from `width`/`height` when absent |
+| `viewBox` | required; synthesized from `width`/`height` when absent |
 | `width`/`height` | removed from root |
 | `xmlns` | added when absent; `xmlns:xlink` dropped, `xlink:href` → `href` |
-| Paint | every `fill`, `stroke` and `stop-color` colour → `currentColor`; `none` preserved |
+| Paint | every `fill`, `stroke` and `stop-color` color → `currentColor`; `none` preserved |
 | Illustrator classes | `<defs><style>.cls-1{fill:#ed2c85}</style></defs>` resolved onto elements, then `<style>` and `class` dropped |
 | Inline `style` | paint declarations treated as paint, then the attribute removed |
 | `<script>`, `on*` | stripped |
@@ -65,7 +65,7 @@ through the `<use>` boundary. An icon's accessible name belongs on the button or
 
 | Code | | |
 |---|---|---|
-| `multi-colour` | ✗ | more than one distinct paint value — the decision below |
+| `multi-color` | ✗ | more than one distinct paint value — the decision below |
 | `raster-image` | ✗ | an `<image>`: a raster or an external URL inside an icon. Not a vector icon; refuse it |
 | `no-viewbox` | ✗ | no `viewBox` and no `width`/`height` to build one from. Re-export with either |
 | `live-text` | ⚠ | `<text>` / `<tspan>` — the decision below |
@@ -75,37 +75,37 @@ through the `<use>` boundary. An icon's accessible name belongs on the button or
 | `clip-mask-filter` | ⚠ | `<mask>`, `<clipPath>`, `filter` survive; check them through `<use>`, not just in a viewer |
 | `viewbox-shape` | ⚠ | non-square or non-zero origin — it will not sit right at the CSS size |
 | `viewbox-grid` | ℹ | not `0 0 24 24`. Renders correctly; re-export only if stroke weight has to match the set |
-| `filename` | ⚠ | not lower kebab-case — an authored `:name:` sanitises to that. **Do not rename the file** — see below |
+| `filename` | ⚠ | not lower kebab-case — an authored `:name:` sanitizes to that. **Do not rename the file** — see below |
 
 A non-24 grid is reported rather than rescaled because rescaling does not fix it: a
 `<g transform="scale(…)">` wrapper scales the strokes by the same factor, producing a file that
 looks conformant and matches nothing.
 
-## multi-colour: the one with a real decision in it
+## multi-color: the one with a real decision in it
 
-The tool prints the colours it found and names a white among them as a probable knockout — white
-sitting over a coloured shape, which flattening turns into a solid block. Show the colours, say
+The tool prints the colors it found and names a white among them as a probable knockout — white
+sitting over a colored shape, which flattening turns into a solid block. Show the colors, say
 which reading you think is right, and pick a branch with the person who supplied the icon.
 
 | | |
 |---|---|
-| `--flatten` | everything to `currentColor`. The answer when the second colour is incidental — an editor artefact, or shading nobody asked for |
+| `--flatten` | everything to `currentColor`. The answer when the second color is incidental — an editor artifact, or shading nobody asked for |
 | `--flatten --keep=#fff` | as above, but the nominated value stays as authored. For a knockout that has to stay white. Spell the value the way the file spells it — case is ignored, `#fff` does not match `#ffffff` |
 | `--palette` | every structural rewrite happens — root id, class resolution, stripping, formatting — and the paint is left exactly as authored, with a `palette-suppressed` warning saying so. On this file only: see "Running it" |
 
-`--palette` is what a genuine colour variant wants. It exists because the alternative people reach
+`--palette` is what a genuine color variant wants. It exists because the alternative people reach
 for is leaving the file alone, and a file that keeps its hex but not its `id="icon"` is the blank
 icon this tooling was built to prevent.
 
 Two things follow from taking it. Name the file `<name>-color.svg` by hand — the tool will not, and
 if content already references the old name that rename is a content change too. And **the icon will
-not follow the colour scheme**: it is one appearance in light and dark, which is why the finding
+not follow the color scheme**: it is one appearance in light and dark, which is why the finding
 stays on the report, downgraded to a warning, instead of clearing. Hex is hex — nothing on the page
 changes a literal.
 
 That is a property of the hex, not of `<use>`. A custom property *does* reach the referenced file
 across every engine, so a palette written by hand as `style="fill: var(--icon-accent, #ed2c85)"`
-would follow the scheme and still fall back to the brand colour. This tool does not produce that
+would follow the scheme and still fall back to the brand color. This tool does not produce that
 shape and will strip it if it meets one, so today the warning stands — but treat it as work not yet
 done rather than a wall.
 
@@ -136,5 +136,5 @@ Do not delete the check as redundant.
 ## Before committing
 
 `git diff` is the review — the tool leaves you a readable file precisely so this works. Then look at
-the icon rendered, in **both colour schemes**, at the size it is actually used. Paint converted to
+the icon rendered, in **both color schemes**, at the size it is actually used. Paint converted to
 `currentColor` is invisible in a diff and obvious on a dark background.

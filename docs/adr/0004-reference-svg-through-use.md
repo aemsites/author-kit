@@ -10,8 +10,8 @@ Icons are authored, not configured: someone types `:globe:`, the pipeline emits
 is whatever authors wrote — unknowable at build time, and there is no build. So an icon is one file
 fetched by name, and the only question left is how the page refers to it.
 
-Sections carry a colour scheme, the header toggles it at runtime, and links and buttons set their
-own colour. An icon that cannot take a colour from the page is wrong somewhere on every site.
+Sections carry a color scheme, the header toggles it at runtime, and links and buttons set their
+own color. An icon that cannot take a color from the page is wrong somewhere on every site.
 
 ## Decision
 
@@ -31,20 +31,20 @@ boundary `<use>` creates, so `color` is the single channel by which the page rea
 
 **The fragment is the fixed string `icon`, never the filename**, so that nobody has to think about
 it. Deriving it from the name makes every name a question: `#2_foo` is a valid id and an invalid
-selector, are underscores allowed, what sanitises `:2_Name-Of--Icon:`, and is any of that written
+selector, are underscores allowed, what sanitizes `:2_Name-Of--Icon:`, and is any of that written
 down. Fixing the string deletes the category. That a rename can no longer blank an icon is a
 consequence, not the reason.
 
 One naming rule survives, because resolution is *by name*: `:globe:` → `icon-globe` →
-`/img/icons/globe.svg`. An authored name sanitises to lowercase alphanumerics and hyphens, so
+`/img/icons/globe.svg`. An authored name sanitizes to lowercase alphanumerics and hyphens, so
 filenames are lower kebab-case — one rule instead of a family, stated here and checked by
 `svg-prep`.
 
 **Not `<img>`.** An opaque replaced element: nothing inherits in, so `currentColor` resolves against
 the file's own initial value and every icon is black. Matching the page would mean a second file per
-colour, forever.
+color, forever.
 
-**Not `mask-image`.** It recolours cleanly, but a mask keeps only alpha, so every colour in the file
+**Not `mask-image`.** It recolors cleanly, but a mask keeps only alpha, so every color in the file
 is discarded and `helix-color.svg` could not exist. It is also a paint effect on a box with no
 intrinsic ratio, so every call site has to state both dimensions.
 
@@ -75,7 +75,7 @@ so `svg.js` exposes `loadHrefSvg`: it fetches any href, caches the parse, and ha
 back for the caller to insert. Inlined, the artwork is ordinary DOM — selectors reach it, and a
 cross-origin file works if it sends CORS headers, which `<use>` cannot use at all.
 
-**`loadHrefSvg` is designed for grown-ups.** It is the escape hatch from the sanitising `svg-prep`
+**`loadHrefSvg` is designed for grown-ups.** It is the escape hatch from the sanitizing `svg-prep`
 does, and strips nothing — not `<script>`, not `<style>`, not event handlers — so the legitimate
 uses of those stay available. Inlining is what makes that a real choice rather than a formality: a
 referenced file never runs anything, while inlined content is live DOM. Point it at files you
@@ -93,7 +93,7 @@ node .agents/skills/svg-prep/prep.js img/icons/
 
 ## The reversals this guards against
 
-**"Use `<img>`, it's simpler."** It is, until the first icon that has to be a colour other than the
+**"Use `<img>`, it's simpler."** It is, until the first icon that has to be a color other than the
 one in the file — which is the first icon, on a site with two schemes.
 
 **Changing `#icon` back to `#${name}`.** Every file carrying the same generic id reads as
@@ -106,6 +106,6 @@ fragment to it means a rename blanks the icon silently instead of 404ing loudly.
 **Removing `xmlns` from `getSvg`.** It looks redundant — the element is named `svg`, and the HTML
 parser never needed telling. Not hypothetical: it shipped, and every icon was invisible while all 73
 tests passed. `parseFromString(str, 'image/svg+xml')` is strict XML, so without the declaration the
-root is a generic `Element` that serialises as `<svg>`, measures 0×0, and never paints.
+root is a generic `Element` that serializes as `<svg>`, measures 0×0, and never paints.
 `test/scripts/svg.test.js` guards it on `namespaceURI`, constructor and rendered geometry — never on
 markup, which cannot tell the difference.

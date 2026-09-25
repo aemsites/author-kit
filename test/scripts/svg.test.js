@@ -4,7 +4,7 @@ import loadIcons, { getSvg, loadHrefSvg } from '../../scripts/utils/svg.js';
 const SVG_NS = 'http://www.w3.org/2000/svg';
 
 /*
- * An <svg> built by an XML parser without an xmlns lands in no namespace: it serialises
+ * An <svg> built by an XML parser without an xmlns lands in no namespace: it serializes
  * identically and never paints, so every assertion here is on the live element or its geometry
  * rather than on markup. External <use> has no load event, hence the poll.
  */
@@ -96,7 +96,7 @@ describe('loadHrefSvg', () => {
     expect(svg.hasAttribute('aria-hidden')).to.be.false;
   });
 
-  it('drops the id the normaliser put on the file', async () => {
+  it('drops the id the normalizer put on the file', async () => {
     const svg = await loadHrefSvg('/img/icons/globe.svg');
     expect(svg.hasAttribute('id')).to.be.false;
   });
