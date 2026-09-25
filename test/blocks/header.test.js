@@ -610,3 +610,45 @@ describe('action state', () => {
     }
   });
 });
+
+describe('header source', () => {
+  const originalFetch = window.fetch;
+  const metas = [];
+  let fetched;
+
+  const setMeta = (name, content) => {
+    const meta = document.createElement('meta');
+    meta.name = name;
+    meta.content = content;
+    document.head.append(meta);
+    metas.push(meta);
+  };
+
+  const fetchedPath = async () => {
+    const { default: init } = await import('../../blocks/header/header.js');
+    await init(document.createElement('header')).catch(() => {});
+    return fetched;
+  };
+
+  beforeEach(() => {
+    window.fetch = async (path) => {
+      fetched = path;
+      return { ok: false };
+    };
+  });
+
+  afterEach(() => {
+    window.fetch = originalFetch;
+    metas.splice(0).forEach((meta) => meta.remove());
+  });
+
+  it('loads the default fragment when a different header block is chosen', async () => {
+    setMeta('header', 'custom-landing-header');
+    expect(await fetchedPath()).to.equal('/fragments/nav/header');
+  });
+
+  it('loads the fragment named by header-source', async () => {
+    setMeta('header-source', '/fragments/nav/landing');
+    expect(await fetchedPath()).to.equal('/fragments/nav/landing');
+  });
+});

@@ -9,7 +9,7 @@ const FOOTER_PATH = '/fragments/nav/footer';
  */
 export default async function init(el) {
   const { locale } = getConfig();
-  const footerMeta = getMetadata('footer');
+  const footerMeta = getMetadata('footer-source');
   const path = footerMeta || FOOTER_PATH;
   try {
     const fragment = await loadFragment(`${locale.prefix}${path}`);
