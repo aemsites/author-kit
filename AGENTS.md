@@ -24,6 +24,9 @@ That rule is for projects built from this template. In this repo you are the mai
 is fair game, but every change ships to every downstream fork, so weigh the blast radius rather
 than the permission.
 
+The version tracks `ak.js` and its imports, per ADR 0005. A release that leaves them alone keeps the
+version and tags `v<version>+<YYYYMMDD>`.
+
 ## Buildless — every line ships
 
 There is no bundler or transpiler. Files are served to the browser exactly as they are on disk
@@ -103,8 +106,9 @@ from any one file:
 - **Hash flags** are stripped from hrefs and turned into behavior: `#_blank`, `#_dnt` (do not
   translate/localize), `#_dnb` (do not auto-block).
 - **Relative links are auto-localized** to the current locale prefix unless marked `#_dnt`.
-- **Metadata switches**: `header` / `footer` set to `off` remove the landmark, or to a path to load
-  a different fragment; `template` loads `templates/<name>/<name>.css`.
+- **Metadata switches**: `header` / `footer` set to `off` remove the landmark, or to a block name to
+  load a different block; `header-source` / `footer-source` load a different fragment; `template`
+  loads `templates/<name>/<name>.css`.
 - **Widget links** like `/tools/widgets/toggle` resolve to nothing on the server — the header block
   matches them by href and replaces them with real controls.
 

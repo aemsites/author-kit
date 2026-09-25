@@ -19,7 +19,7 @@ For projects that want a few more batteries. Built by the team who brought you d
 1. **Recommended:** Install common npm packages like linting and testing: `npm i`.
 
 ## Syncing from template
-Every project made from this template gets its own history and is a snapshot in time. If you want the latest code from this template, the following commands are helpful. Be mindful of [the release notes](https://github.com/aemsites/author-kit/releases) for any potential impact to your existing project.
+Every project made from this template gets its own history and is a snapshot in time. If you want the latest code from this template, the following commands are helpful. Be mindful of [the release notes](https://github.com/aemsites/author-kit/releases) for any potential impact to your existing project. A tag ending `+<date>` leaves `scripts/ak.js` unchanged.
 
 ### Add remote named `template`
 ```bash
@@ -79,6 +79,7 @@ git checkout template/main -- scripts/ak.js
 * Actions - Last section of header
 * Menu & mega menu support
 * Disable header/footer via meta props
+* Swap header/footer block (`header`, `footer`) or content (`header-source`, `footer-source`) via meta props
 
 ### Localization & globalization
 * Language only support - Ex: en, de, hi, ja

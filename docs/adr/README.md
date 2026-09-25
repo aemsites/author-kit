@@ -14,6 +14,8 @@ Decisions that shaped this project, and why. Numbered, immutable, newest last.
   file answers to the same `#icon`, and what the shadow boundary costs.
 - [0005. Version the engine, not the repository](0005-version-the-engine-not-the-repository.md) —
   what the number in `package.json` tracks, and why one line of `ak.js` outweighs the rest.
+- [0006. Keep the template's automation to itself](0006-keep-the-templates-automation-to-itself.md) —
+  why every workflow is gated to this repository, and how a generated project adopts one.
 
 Start with 0000. It is numbered zero because it is prologue: the decision to have this project at
 all, rather than a decision made within it.
