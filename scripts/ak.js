@@ -12,6 +12,29 @@
 
 const LOG = async (ex, el) => (await import('./utils/error.js')).default(ex, el);
 
+// Safely abstract storage for devices with it off
+const tryStorage = (() => {
+  const cache = {};
+  const noop = new Proxy({}, {
+    get(_, prop) {
+      const descriptor = Object.getOwnPropertyDescriptor(Storage.prototype, prop);
+      return descriptor?.get ? 0 : () => null;
+    },
+  });
+  return (type) => {
+    try {
+      cache[type] ??= window[type] ?? noop;
+    } catch (ex) {
+      LOG(ex);
+      cache[type] = noop;
+    }
+    return cache[type];
+  };
+})();
+
+export const ifLocalStorage = tryStorage('localStorage');
+export const ifSessionStorage = tryStorage('sessionStorage');
+
 export function getMetadata(name) {
   const attr = name && name.includes(':') ? 'property' : 'name';
   const meta = document.head.querySelector(`meta[${attr}="${name}"]`);
@@ -300,7 +323,7 @@ function decorateHeader() {
 }
 
 function decorateSession() {
-  sessionStorage.setItem('session', true);
+  ifSessionStorage.setItem('session', true);
   document.body.classList.add('session');
 }
 
@@ -308,18 +331,18 @@ function decorateDoc() {
   decorateHeader();
   loadTemplate();
 
-  const scheme = localStorage.getItem('color-scheme');
+  const scheme = ifLocalStorage.getItem('color-scheme');
   if (scheme) document.body.classList.add(scheme);
 
   const pageId = window.location.hash?.replace('#', '');
-  if (pageId) localStorage.setItem('lazyhash', pageId);
+  if (pageId) ifLocalStorage.setItem('lazyhash', pageId);
 }
 
 export async function loadArea({ area } = { area: document }) {
   const isDoc = area === document;
-  const isSession = sessionStorage.getItem('session');
+  const isSession = ifSessionStorage.getItem('session');
   if (isDoc) {
-    if (isSession) await decorateSession();
+    if (isSession) decorateSession();
     decorateDoc();
   }
   decoratePictures(area);

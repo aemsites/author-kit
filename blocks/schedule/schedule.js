@@ -1,4 +1,4 @@
-import { getConfig, localizeUrl } from '../../scripts/ak.js';
+import { getConfig, ifLocalStorage, localizeUrl } from '../../scripts/ak.js';
 import ENV from '../../scripts/utils/env.js';
 import { loadFragment } from '../fragment/fragment.js';
 
@@ -82,7 +82,7 @@ function getDate() {
   if (ENV === 'prod') return now;
 
   // Attempt a simulated schedule
-  const sim = localStorage.getItem('aem-schedule')
+  const sim = ifLocalStorage.getItem('aem-schedule')
    || new URL(window.location.href).searchParams.get('schedule');
   return sim * 1000 || now;
 }
