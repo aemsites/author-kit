@@ -1,4 +1,4 @@
-import { getConfig, getMetadata } from '../../scripts/ak.js';
+import { getConfig, getMetadata, ifLocalStorage } from '../../scripts/ak.js';
 import { loadFragment } from '../fragment/fragment.js';
 import { setColorScheme } from '../section-metadata/section-metadata.js';
 
@@ -89,7 +89,7 @@ function decorateScheme(btn) {
 
     body.classList.remove(theme.remove);
     body.classList.add(theme.add);
-    localStorage.setItem('color-scheme', theme.add);
+    ifLocalStorage.setItem('color-scheme', theme.add);
     // Re-calculatie section schemes
     const sections = document.querySelectorAll('.section');
     for (const section of sections) {
